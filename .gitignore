@@ -11,3 +11,7 @@ wheels/
 
 *.pth
 *.pkl
+
+report.aux
+report.log
+report.out
