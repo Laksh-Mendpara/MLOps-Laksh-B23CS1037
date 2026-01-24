@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MLOps Assignment 1 - Laksh Mendpara</title>
+    <style>
+      :root {
+        --primary-color: #2563eb;
+        --text-color: #1f2937;
+        --bg-color: #f3f4f6;
+        --card-bg: #ffffff;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Helvetica, Arial, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .container {
+        background-color: var(--card-bg);
+        padding: 3rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        max-width: 600px;
+        width: 90%;
+        text-align: center;
+      }
+
+      h1 {
+        color: #111827;
+        margin-bottom: 0.5rem;
+        font-size: 2rem;
+      }
+
+      .profile-info {
+        margin-bottom: 2rem;
+        color: #4b5563;
+      }
+
+      .profile-info p {
+        margin: 0.5rem 0;
+        font-weight: 500;
+      }
+
+      .email {
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+
+      .divider {
+        height: 1px;
+        background-color: #e5e7eb;
+        margin: 2rem 0;
+      }
+
+      .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #374151;
+        text-align: left;
+      }
+
+      .summary {
+        text-align: left;
+        color: #4b5563;
+        margin-bottom: 2rem;
+      }
+
+      .btn {
+        display: inline-block;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background-color 0.2s;
+      }
+
+      .btn:hover {
+        background-color: #1d4ed8;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg-color: #111827;
+          --card-bg: #1f2937;
+          --text-color: #f3f4f6;
+        }
+        .profile-info {
+          color: #d1d5db;
+        }
+        .section-title {
+          color: #e5e7eb;
+        }
+        .summary {
+          color: #d1d5db;
+        }
+        h1 {
+          color: #ffffff;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>DLOPs Assignment 1</h1>
+
+      <div class="profile-info">
+        <p>Laksh Mendpara</p>
+        <p>Roll No: B23CS1037</p>
+        <p>
+          <a href="mailto:b23cs1037@iitj.ac.in" class="email"
+            >b23cs1037@iitj.ac.in</a
+          >
+        </p>
+      </div>
+
+      <div class="divider"></div>
+
+      <h2 class="section-title">Key Learnings</h2>
+      <div class="summary">
+        <p>
+          In this assignment, I explored the efficacy of ResNet-18 and ResNet-50
+          architectures on the MNIST and Fashion-MNIST datasets. The experiments
+          revealed that while both models achieved exceptional accuracy (>99%)
+          on MNIST, Fashion-MNIST posed a greater challenge (~92%), with the
+          Adam optimizer providing superior convergence and stability over SGD.
+        </p>
+        <p>
+          Interestingly, the lighter ResNet-18 model often performed comparably
+          to ResNet-50 within limited epochs, demonstrating that increased model
+          depth does not always guarantee significantly better performance for
+          simpler datasets.
+        </p>
+      </div>
+
+      <a
+        href="https://github.com/Laksh-Mendpara/MLOps-Laksh-B23CS1037/blob/Assignment-1/report.pdf"
+        class="btn"
+        >View Assignment Report</a
+      >
+    </div>
+  </body>
+</html>
