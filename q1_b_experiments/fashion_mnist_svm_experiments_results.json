@@ -1,0 +1,190 @@
+[
+    {
+        "dataset_name": "fashion_mnist",
+        "kernel_name": "poly",
+        "kernel_params": {
+            "degree": 2,
+            "C": 0.1,
+            "gamma": "scale"
+        },
+        "train_accuracy": 0.7508775510204082,
+        "val_accuracy": 0.7515714285714286,
+        "test_accuracy": 0.7515714285714286,
+        "model_path": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_poly_kernel_params_{'degree': 2, 'C': 0.1, 'gamma': 'scale'}/svm_model.pkl",
+        "model_dir": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_poly_kernel_params_{'degree': 2, 'C': 0.1, 'gamma': 'scale'}",
+        "base_dir": "./q1_b_experiments/fashion_mnist_svm_experiments",
+        "training_time": 3.58558988571167
+    },
+    {
+        "dataset_name": "fashion_mnist",
+        "kernel_name": "poly",
+        "kernel_params": {
+            "degree": 2,
+            "C": 0.1,
+            "gamma": "auto"
+        },
+        "train_accuracy": 0.7508571428571429,
+        "val_accuracy": 0.7515714285714286,
+        "test_accuracy": 0.7515714285714286,
+        "model_path": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_poly_kernel_params_{'degree': 2, 'C': 0.1, 'gamma': 'auto'}/svm_model.pkl",
+        "model_dir": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_poly_kernel_params_{'degree': 2, 'C': 0.1, 'gamma': 'auto'}",
+        "base_dir": "./q1_b_experiments/fashion_mnist_svm_experiments",
+        "training_time": 3.5420796871185303
+    },
+    {
+        "dataset_name": "fashion_mnist",
+        "kernel_name": "poly",
+        "kernel_params": {
+            "degree": 2,
+            "C": 1.0,
+            "gamma": "scale"
+        },
+        "train_accuracy": 0.8588979591836735,
+        "val_accuracy": 0.8158571428571428,
+        "test_accuracy": 0.8122142857142857,
+        "model_path": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_poly_kernel_params_{'degree': 2, 'C': 1.0, 'gamma': 'scale'}/svm_model.pkl",
+        "model_dir": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_poly_kernel_params_{'degree': 2, 'C': 1.0, 'gamma': 'scale'}",
+        "base_dir": "./q1_b_experiments/fashion_mnist_svm_experiments",
+        "training_time": 3.054765224456787
+    },
+    {
+        "dataset_name": "fashion_mnist",
+        "kernel_name": "poly",
+        "kernel_params": {
+            "degree": 2,
+            "C": 1.0,
+            "gamma": "auto"
+        },
+        "train_accuracy": 0.8589183673469388,
+        "val_accuracy": 0.8158571428571428,
+        "test_accuracy": 0.8122142857142857,
+        "model_path": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_poly_kernel_params_{'degree': 2, 'C': 1.0, 'gamma': 'auto'}/svm_model.pkl",
+        "model_dir": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_poly_kernel_params_{'degree': 2, 'C': 1.0, 'gamma': 'auto'}",
+        "base_dir": "./q1_b_experiments/fashion_mnist_svm_experiments",
+        "training_time": 3.015258550643921
+    },
+    {
+        "dataset_name": "fashion_mnist",
+        "kernel_name": "poly",
+        "kernel_params": {
+            "degree": 3,
+            "C": 0.1,
+            "gamma": "scale"
+        },
+        "train_accuracy": 0.7259591836734693,
+        "val_accuracy": 0.7197142857142858,
+        "test_accuracy": 0.718,
+        "model_path": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_poly_kernel_params_{'degree': 3, 'C': 0.1, 'gamma': 'scale'}/svm_model.pkl",
+        "model_dir": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_poly_kernel_params_{'degree': 3, 'C': 0.1, 'gamma': 'scale'}",
+        "base_dir": "./q1_b_experiments/fashion_mnist_svm_experiments",
+        "training_time": 3.738354444503784
+    },
+    {
+        "dataset_name": "fashion_mnist",
+        "kernel_name": "poly",
+        "kernel_params": {
+            "degree": 3,
+            "C": 0.1,
+            "gamma": "auto"
+        },
+        "train_accuracy": 0.7259591836734693,
+        "val_accuracy": 0.7197142857142858,
+        "test_accuracy": 0.718,
+        "model_path": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_poly_kernel_params_{'degree': 3, 'C': 0.1, 'gamma': 'auto'}/svm_model.pkl",
+        "model_dir": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_poly_kernel_params_{'degree': 3, 'C': 0.1, 'gamma': 'auto'}",
+        "base_dir": "./q1_b_experiments/fashion_mnist_svm_experiments",
+        "training_time": 3.724337577819824
+    },
+    {
+        "dataset_name": "fashion_mnist",
+        "kernel_name": "poly",
+        "kernel_params": {
+            "degree": 3,
+            "C": 1.0,
+            "gamma": "scale"
+        },
+        "train_accuracy": 0.8692857142857143,
+        "val_accuracy": 0.8092857142857143,
+        "test_accuracy": 0.8015714285714286,
+        "model_path": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_poly_kernel_params_{'degree': 3, 'C': 1.0, 'gamma': 'scale'}/svm_model.pkl",
+        "model_dir": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_poly_kernel_params_{'degree': 3, 'C': 1.0, 'gamma': 'scale'}",
+        "base_dir": "./q1_b_experiments/fashion_mnist_svm_experiments",
+        "training_time": 3.0847177505493164
+    },
+    {
+        "dataset_name": "fashion_mnist",
+        "kernel_name": "poly",
+        "kernel_params": {
+            "degree": 3,
+            "C": 1.0,
+            "gamma": "auto"
+        },
+        "train_accuracy": 0.8692857142857143,
+        "val_accuracy": 0.8092857142857143,
+        "test_accuracy": 0.8015,
+        "model_path": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_poly_kernel_params_{'degree': 3, 'C': 1.0, 'gamma': 'auto'}/svm_model.pkl",
+        "model_dir": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_poly_kernel_params_{'degree': 3, 'C': 1.0, 'gamma': 'auto'}",
+        "base_dir": "./q1_b_experiments/fashion_mnist_svm_experiments",
+        "training_time": 3.057732105255127
+    },
+    {
+        "dataset_name": "fashion_mnist",
+        "kernel_name": "rbf",
+        "kernel_params": {
+            "C": 0.1,
+            "gamma": "scale"
+        },
+        "train_accuracy": 0.7650204081632653,
+        "val_accuracy": 0.7797142857142857,
+        "test_accuracy": 0.7722857142857142,
+        "model_path": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_rbf_kernel_params_{'C': 0.1, 'gamma': 'scale'}/svm_model.pkl",
+        "model_dir": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_rbf_kernel_params_{'C': 0.1, 'gamma': 'scale'}",
+        "base_dir": "./q1_b_experiments/fashion_mnist_svm_experiments",
+        "training_time": 3.2592408657073975
+    },
+    {
+        "dataset_name": "fashion_mnist",
+        "kernel_name": "rbf",
+        "kernel_params": {
+            "C": 0.1,
+            "gamma": "auto"
+        },
+        "train_accuracy": 0.7649795918367347,
+        "val_accuracy": 0.7798571428571428,
+        "test_accuracy": 0.7723571428571429,
+        "model_path": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_rbf_kernel_params_{'C': 0.1, 'gamma': 'auto'}/svm_model.pkl",
+        "model_dir": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_rbf_kernel_params_{'C': 0.1, 'gamma': 'auto'}",
+        "base_dir": "./q1_b_experiments/fashion_mnist_svm_experiments",
+        "training_time": 3.183485269546509
+    },
+    {
+        "dataset_name": "fashion_mnist",
+        "kernel_name": "rbf",
+        "kernel_params": {
+            "C": 1.0,
+            "gamma": "scale"
+        },
+        "train_accuracy": 0.8715714285714286,
+        "val_accuracy": 0.8292857142857143,
+        "test_accuracy": 0.8243571428571429,
+        "model_path": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_rbf_kernel_params_{'C': 1.0, 'gamma': 'scale'}/svm_model.pkl",
+        "model_dir": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_rbf_kernel_params_{'C': 1.0, 'gamma': 'scale'}",
+        "base_dir": "./q1_b_experiments/fashion_mnist_svm_experiments",
+        "training_time": 3.015918016433716
+    },
+    {
+        "dataset_name": "fashion_mnist",
+        "kernel_name": "rbf",
+        "kernel_params": {
+            "C": 1.0,
+            "gamma": "auto"
+        },
+        "train_accuracy": 0.8715714285714286,
+        "val_accuracy": 0.8292857142857143,
+        "test_accuracy": 0.8243571428571429,
+        "model_path": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_rbf_kernel_params_{'C': 1.0, 'gamma': 'auto'}/svm_model.pkl",
+        "model_dir": "./q1_b_experiments/fashion_mnist_svm_experiments/dataset_name_fashion_mnist_kernel_name_rbf_kernel_params_{'C': 1.0, 'gamma': 'auto'}",
+        "base_dir": "./q1_b_experiments/fashion_mnist_svm_experiments",
+        "training_time": 2.8472936153411865
+    }
+]
