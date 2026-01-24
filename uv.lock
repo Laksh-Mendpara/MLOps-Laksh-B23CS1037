@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.10"
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'win32'",
@@ -544,6 +544,7 @@ dependencies = [
     { name = "fvcore" },
     { name = "jupyterlab" },
     { name = "matplotlib" },
+    { name = "nbmerge" },
     { name = "notebook" },
     { name = "papermill" },
     { name = "ray", extra = ["tune"] },
@@ -562,6 +563,7 @@ requires-dist = [
     { name = "fvcore", specifier = ">=0.1.5.post20221221" },
     { name = "jupyterlab", specifier = ">=4.5.2" },
     { name = "matplotlib", specifier = ">=3.10.8" },
+    { name = "nbmerge", specifier = ">=0.0.4" },
     { name = "notebook", specifier = ">=7.5.2" },
     { name = "papermill", specifier = ">=2.6.0" },
     { name = "ray", extras = ["tune"], specifier = ">=2.53.0" },
@@ -2061,6 +2063,12 @@ sdist = { url = "https://files.pythonhosted.org/packages/6d/fd/91545e604bc3dad7d
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a9/82/0340caa499416c78e5d8f5f05947ae4bc3cba53c9f038ab6e9ed964e22f1/nbformat-5.10.4-py3-none-any.whl", hash = "sha256:3b48d6c8fbca4b299bf3982ea7db1af21580e4fec269ad087b9e81588891200b", size = 78454, upload-time = "2024-04-04T11:20:34.895Z" },
 ]
+
+[[package]]
+name = "nbmerge"
+version = "0.0.4"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/73/a9/56a02f2a3405397af9924e1d372b2e546ebcdb312d800f3945b321a328a5/nbmerge-0.0.4.tar.gz", hash = "sha256:f432797ee685ed495a2daa4dbb76e2b52028d2c3a38142b523bb5cb832df0882", size = 7590, upload-time = "2017-05-14T21:14:22.954Z" }
 
 [[package]]
 name = "nest-asyncio"

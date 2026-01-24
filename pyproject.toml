@@ -8,6 +8,7 @@ dependencies = [
     "fvcore>=0.1.5.post20221221",
     "jupyterlab>=4.5.2",
     "matplotlib>=3.10.8",
+    "nbmerge>=0.0.4",
     "notebook>=7.5.2",
     "papermill>=2.6.0",
     "ray[tune]>=2.53.0",
