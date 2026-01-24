@@ -1,0 +1,542 @@
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\geometry{a4paper, margin=1in}
+
+\title{\textbf{DLOPs Assignment 1 Report}}
+
+\author{
+Laksh Mendpara \\
+\textit{Roll Number: B23CS1037}
+}
+
+\date{
+\today \\
+\vspace{0.5cm}
+\textbf{Colab Notebook:} \\
+\url{https://colab.research.google.com/drive/1A6I5AuWTPN1Adlk6fiDcz_UhlifHuXEM?usp=sharing} \\
+\vspace{0.2cm}
+\textbf{Github Link:} \\
+\url{https://github.com/Laksh-Mendpara/MLOps-Laksh-B23CS1037/tree/Assignment-1} \\
+\vspace{0.2cm}
+\textbf{Best Performing Models:} \\
+\url{https://drive.google.com/drive/folders/1DkssK5Gm7j0-HUbOuw2zlhp4N-J6D6d3?usp=sharing}
+}
+
+
+\begin{document}
+
+\maketitle
+
+\section{Q1(a): ResNet Classification on MNIST and FashionMNIST}
+
+In this section, we trained ResNet-18 and ResNet-50 models on the MNIST and FashionMNIST datasets using various hyperparameters (Batch Size, Optimizer, Learning Rate).
+
+\subsection*{Results Analysis}
+\begin{itemize}
+    \item \textbf{Overall Performance:} The models performed exceptionally well on MNIST, achieving $>99\%$ accuracy in most configurations.
+    \item \textbf{FashionMNIST Challenge:} FashionMNIST proved more challenging, with accuracies hovering around 90-93\%.
+    \item \textbf{Optimizer Comparison:} Adam generally converged faster and achieved better stability compared to SGD, especially at lower learning rates. SGD with LR=0.0001 showed significantly poorer performance on FashionMNIST.
+\end{itemize}
+
+\subsection*{Experimental Results}
+\subsubsection*{Results for MNIST}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{ccccccc}
+\toprule
+Batch & Opt & LR & R50 (5e) & R50 (10e) & R18 (5e) & R18 (10e) \\
+\midrule
+16 & sgd & 0.001 & 99.19 & 99.31 & 99.06 & 99.37 \\
+16 & sgd & 0.0001 & 97.05 & 98.56 & 97.97 & 98.75 \\
+16 & adam & 0.001 & 98.87 & 99.02 & 99.07 & 99.12 \\
+16 & adam & 0.0001 & 99.17 & 99.15 & 99.15 & 99.42 \\
+32 & sgd & 0.001 & 98.93 & 99.24 & 99.01 & 99.28 \\
+32 & sgd & 0.0001 & 93.83 & 96.20 & 96.41 & 97.76 \\
+32 & adam & 0.001 & 98.80 & 99.05 & 98.82 & 99.33 \\
+32 & adam & 0.0001 & 99.36 & 99.10 & 99.25 & 99.41 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\subsubsection*{Results for FASHION-MNIST}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{ccccccc}
+\toprule
+Batch & Opt & LR & R50 (5e) & R50 (10e) & R18 (5e) & R18 (10e) \\
+\midrule
+16 & sgd & 0.001 & 88.64 & 91.74 & 90.03 & 90.90 \\
+16 & sgd & 0.0001 & 78.24 & 84.82 & 80.29 & 86.63 \\
+16 & adam & 0.001 & 90.05 & 89.85 & 90.42 & 92.99 \\
+16 & adam & 0.0001 & 89.24 & 91.76 & 91.17 & 92.43 \\
+32 & sgd & 0.001 & 86.95 & 90.13 & 87.33 & 90.52 \\
+32 & sgd & 0.0001 & 74.35 & 80.64 & 77.56 & 82.31 \\
+32 & adam & 0.001 & 89.74 & 91.09 & 90.80 & 92.00 \\
+32 & adam & 0.0001 & 91.21 & 91.91 & 90.12 & 90.66 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{Performance Visualization}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{q1_a_experiments/plots/full_parameter_grid.png}
+    \caption{Parameter Grid Analysis}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{q1_a_experiments/plots/accuracy_matrix.png}
+    \caption{Accuracy Matrix}
+\end{figure}
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.8\textwidth]{q1_a_experiments/plots/overfitting_analysis.png}
+%     \caption{Overfitting Analysis}
+% \end{figure}
+\clearpage
+
+\section{Q1(b): SVM Classification}
+We trained SVM classifiers with Polynomial and RBF kernels on both datasets. 
+Kernel Performance: RBF kernels generally outperformed Polynomial kernels.
+\subsubsection*{SVM Results for MNIST}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llrr}
+\toprule
+Kernel & Params & Acc (\%) & Time (ms) \\
+\midrule
+poly & \{degree: 2, C: 0.1, gamma: scale\} & 87.37 & 4686 \\
+poly & \{degree: 2, C: 0.1, gamma: auto\} & 87.01 & 4235 \\
+poly & \{degree: 2, C: 1.0, gamma: scale\} & 95.65 & 3136 \\
+poly & \{degree: 2, C: 1.0, gamma: auto\} & 95.61 & 3081 \\
+poly & \{degree: 3, C: 0.1, gamma: scale\} & 45.98 & 5219 \\
+poly & \{degree: 3, C: 0.1, gamma: auto\} & 44.33 & 5531 \\
+poly & \{degree: 3, C: 1.0, gamma: scale\} & 92.04 & 3809 \\
+poly & \{degree: 3, C: 1.0, gamma: auto\} & 91.80 & 3872 \\
+rbf & \{C: 0.1, gamma: scale\} & 91.15 & 3859 \\
+rbf & \{C: 0.1, gamma: auto\} & 91.15 & 3788 \\
+rbf & \{C: 1.0, gamma: scale\} & 96.01 & 3276 \\
+rbf & \{C: 1.0, gamma: auto\} & 95.99 & 2991 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\subsubsection*{SVM Results for FASHION-MNIST}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llrr}
+\toprule
+Kernel & Params & Acc (\%) & Time (ms) \\
+\midrule
+poly & \{degree: 2, C: 0.1, gamma: scale\} & 75.16 & 3586 \\
+poly & \{degree: 2, C: 0.1, gamma: auto\} & 75.16 & 3542 \\
+poly & \{degree: 2, C: 1.0, gamma: scale\} & 81.22 & 3055 \\
+poly & \{degree: 2, C: 1.0, gamma: auto\} & 81.22 & 3015 \\
+poly & \{degree: 3, C: 0.1, gamma: scale\} & 71.80 & 3738 \\
+poly & \{degree: 3, C: 0.1, gamma: auto\} & 71.80 & 3724 \\
+poly & \{degree: 3, C: 1.0, gamma: scale\} & 80.16 & 3085 \\
+poly & \{degree: 3, C: 1.0, gamma: auto\} & 80.15 & 3058 \\
+rbf & \{C: 0.1, gamma: scale\} & 77.23 & 3259 \\
+rbf & \{C: 0.1, gamma: auto\} & 77.24 & 3183 \\
+rbf & \{C: 1.0, gamma: scale\} & 82.44 & 3016 \\
+rbf & \{C: 1.0, gamma: auto\} & 82.44 & 2847 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{SVM Visualizations}
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.7\textwidth]{q1_b_experiments/plots/svm_accuracy_trends.png}
+%     \caption{SVM Accuracy Trends}
+% \end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{q1_b_experiments/plots/svm_poly_heatmap.png}
+        \caption{Poly Kernel Heatmap}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{q1_b_experiments/plots/svm_rbf_heatmap.png}
+        \caption{RBF Kernel Heatmap}
+    \end{subfigure}
+\end{figure}
+\clearpage
+
+\section{Q2: Hardware Comparison (CPU vs GPU)}
+This section compares the training performance of ResNet models on CPU and GPU.
+GPU yielded a massive speedup (~5.5x for ResNet-18).
+\subsection*{Performance Comparison Table}
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{llllrrr}
+\toprule
+Dev & Opt & LR & R18 Acc & R32 Acc & R50 Acc & R18 Time(ms) \\
+\midrule
+CPU & SGD & 0.001 & 90.48 & 90.83 & 88.52 & 1734187 \\
+CPU & ADAM & 0.001 & 90.53 & 90.46 & 89.20 & 2009823 \\
+GPU & SGD & 0.001 & 90.15 & 90.47 & 90.33 & 315674 \\
+GPU & ADAM & 0.001 & 90.79 & 91.02 & 88.07 & 326356 \\
+\bottomrule
+\end{tabular}
+\caption*{Note: Table simplified for LaTeX fit. Full data in README.}
+\end{table}
+
+\subsection*{Hardware Performance Dashboard}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{q2_experiments/plots/hardware_performance_dashboard.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{q2_experiments/plots/return_on_compute.png}
+\end{figure}
+\clearpage
+\section*{Appendix: Training Curves}
+\subsection*{Q1(a) Experiments (Max Epochs = 10)}
+\subsubsection*{MNIST}
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet18 ADAM LR=0.0001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet18_learning_rate_0.0001_batch_size_16_optimizer_name_adam_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet18_learning_rate_0.0001_batch_size_16_optimizer_name_adam_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet18 SGD LR=0.0001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet18_learning_rate_0.0001_batch_size_16_optimizer_name_sgd_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet18_learning_rate_0.0001_batch_size_16_optimizer_name_sgd_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet18 ADAM LR=0.0001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet18_learning_rate_0.0001_batch_size_32_optimizer_name_adam_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet18_learning_rate_0.0001_batch_size_32_optimizer_name_adam_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet18 SGD LR=0.0001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet18_learning_rate_0.0001_batch_size_32_optimizer_name_sgd_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet18_learning_rate_0.0001_batch_size_32_optimizer_name_sgd_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\end{figure}
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet18 ADAM LR=0.001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet18_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet18_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet18 SGD LR=0.001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet18_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet18_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet18 ADAM LR=0.001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet18_learning_rate_0.001_batch_size_32_optimizer_name_adam_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet18_learning_rate_0.001_batch_size_32_optimizer_name_adam_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet18 SGD LR=0.001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet18_learning_rate_0.001_batch_size_32_optimizer_name_sgd_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet18_learning_rate_0.001_batch_size_32_optimizer_name_sgd_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\end{figure}
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet50 ADAM LR=0.0001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet50_learning_rate_0.0001_batch_size_16_optimizer_name_adam_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet50_learning_rate_0.0001_batch_size_16_optimizer_name_adam_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet50 SGD LR=0.0001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet50_learning_rate_0.0001_batch_size_16_optimizer_name_sgd_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet50_learning_rate_0.0001_batch_size_16_optimizer_name_sgd_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet50 ADAM LR=0.0001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet50_learning_rate_0.0001_batch_size_32_optimizer_name_adam_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet50_learning_rate_0.0001_batch_size_32_optimizer_name_adam_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet50 SGD LR=0.0001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet50_learning_rate_0.0001_batch_size_32_optimizer_name_sgd_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet50_learning_rate_0.0001_batch_size_32_optimizer_name_sgd_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\end{figure}
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet50 ADAM LR=0.001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet50_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet50_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet50 SGD LR=0.001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet50_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet50_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet50 ADAM LR=0.001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet50_learning_rate_0.001_batch_size_32_optimizer_name_adam_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet50_learning_rate_0.001_batch_size_32_optimizer_name_adam_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet50 SGD LR=0.001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet50_learning_rate_0.001_batch_size_32_optimizer_name_sgd_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/mnist_experiments/dataset_name_mnist_model_name_resnet50_learning_rate_0.001_batch_size_32_optimizer_name_sgd_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\end{figure}
+\begin{figure}[H]
+\centering
+\end{figure}
+\clearpage
+\subsubsection*{FASHION\_MNIST}
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet18 ADAM LR=0.0001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.0001_batch_size_16_optimizer_name_adam_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.0001_batch_size_16_optimizer_name_adam_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet18 SGD LR=0.0001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.0001_batch_size_16_optimizer_name_sgd_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.0001_batch_size_16_optimizer_name_sgd_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet18 ADAM LR=0.0001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.0001_batch_size_32_optimizer_name_adam_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.0001_batch_size_32_optimizer_name_adam_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet18 SGD LR=0.0001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.0001_batch_size_32_optimizer_name_sgd_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.0001_batch_size_32_optimizer_name_sgd_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\end{figure}
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet18 ADAM LR=0.001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet18 SGD LR=0.001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet18 ADAM LR=0.001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.001_batch_size_32_optimizer_name_adam_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.001_batch_size_32_optimizer_name_adam_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet18 SGD LR=0.001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.001_batch_size_32_optimizer_name_sgd_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.001_batch_size_32_optimizer_name_sgd_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\end{figure}
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet50 ADAM LR=0.0001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.0001_batch_size_16_optimizer_name_adam_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.0001_batch_size_16_optimizer_name_adam_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet50 SGD LR=0.0001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.0001_batch_size_16_optimizer_name_sgd_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.0001_batch_size_16_optimizer_name_sgd_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet50 ADAM LR=0.0001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.0001_batch_size_32_optimizer_name_adam_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.0001_batch_size_32_optimizer_name_adam_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet50 SGD LR=0.0001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.0001_batch_size_32_optimizer_name_sgd_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.0001_batch_size_32_optimizer_name_sgd_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\end{figure}
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet50 ADAM LR=0.001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet50 SGD LR=0.001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet50 ADAM LR=0.001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.001_batch_size_32_optimizer_name_adam_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.001_batch_size_32_optimizer_name_adam_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{Resnet50 SGD LR=0.001} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.001_batch_size_32_optimizer_name_sgd_num_epochs_10/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q1_a_experiments/fashion_mnist_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.001_batch_size_32_optimizer_name_sgd_num_epochs_10/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\end{figure}
+\begin{figure}[H]
+\centering
+\end{figure}
+\clearpage
+\subsection*{Q2 Experiments (FashionMNIST, Max Epochs = 5)}
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{CPU Resnet18} \\
+\includegraphics[width=\linewidth]{q2_experiments/cpu_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_5_device_cpu/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q2_experiments/cpu_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_5_device_cpu/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{CPU Resnet18} \\
+\includegraphics[width=\linewidth]{q2_experiments/cpu_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_5_device_cpu/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q2_experiments/cpu_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_5_device_cpu/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{CPU Resnet32} \\
+\includegraphics[width=\linewidth]{q2_experiments/cpu_experiments/dataset_name_fashion-mnist_model_name_resnet32_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_5_device_cpu/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q2_experiments/cpu_experiments/dataset_name_fashion-mnist_model_name_resnet32_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_5_device_cpu/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{CPU Resnet32} \\
+\includegraphics[width=\linewidth]{q2_experiments/cpu_experiments/dataset_name_fashion-mnist_model_name_resnet32_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_5_device_cpu/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q2_experiments/cpu_experiments/dataset_name_fashion-mnist_model_name_resnet32_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_5_device_cpu/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\end{figure}
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{CPU Resnet50} \\
+\includegraphics[width=\linewidth]{q2_experiments/cpu_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_5_device_cpu/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q2_experiments/cpu_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_5_device_cpu/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{CPU Resnet50} \\
+\includegraphics[width=\linewidth]{q2_experiments/cpu_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_5_device_cpu/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q2_experiments/cpu_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_5_device_cpu/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{GPU Resnet18} \\
+\includegraphics[width=\linewidth]{q2_experiments/cuda_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_5_device_cuda/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q2_experiments/cuda_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_5_device_cuda/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{GPU Resnet18} \\
+\includegraphics[width=\linewidth]{q2_experiments/cuda_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_5_device_cuda/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q2_experiments/cuda_experiments/dataset_name_fashion-mnist_model_name_resnet18_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_5_device_cuda/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\end{figure}
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{GPU Resnet32} \\
+\includegraphics[width=\linewidth]{q2_experiments/cuda_experiments/dataset_name_fashion-mnist_model_name_resnet32_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_5_device_cuda/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q2_experiments/cuda_experiments/dataset_name_fashion-mnist_model_name_resnet32_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_5_device_cuda/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{GPU Resnet32} \\
+\includegraphics[width=\linewidth]{q2_experiments/cuda_experiments/dataset_name_fashion-mnist_model_name_resnet32_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_5_device_cuda/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q2_experiments/cuda_experiments/dataset_name_fashion-mnist_model_name_resnet32_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_5_device_cuda/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{GPU Resnet50} \\
+\includegraphics[width=\linewidth]{q2_experiments/cuda_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_5_device_cuda/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q2_experiments/cuda_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.001_batch_size_16_optimizer_name_adam_num_epochs_5_device_cuda/loss_plot.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering \textbf{GPU Resnet50} \\
+\includegraphics[width=\linewidth]{q2_experiments/cuda_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_5_device_cuda/accuracy_plot.png} \\
+\includegraphics[width=\linewidth]{q2_experiments/cuda_experiments/dataset_name_fashion-mnist_model_name_resnet50_learning_rate_0.001_batch_size_16_optimizer_name_sgd_num_epochs_5_device_cuda/loss_plot.png}
+\end{minipage}
+\hfill
+\vspace{1em}
+\end{figure}
+\begin{figure}[H]
+\centering
+\end{figure}
+
+\end{document}
