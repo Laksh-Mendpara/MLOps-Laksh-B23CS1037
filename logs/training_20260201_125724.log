@@ -1,0 +1,56 @@
+[2026-02-01 12:57:24] INFO - Logger initialized. Log file: logs/training_20260201_125724.log
+[2026-02-01 12:57:26] INFO - WandB run initialized: https://wandb.ai/b23cs1037-iit-jodhpur/cifar10-cnn-mlops/runs/6tbudx0x
+[2026-02-01 12:57:28] INFO - Train samples: 45000, Val samples: 5000, Test samples: 10000
+[2026-02-01 12:57:29] INFO - Model created: ResNet18_CIFAR
+[2026-02-01 12:57:29] INFO - Total parameters: 11,173,962
+[2026-02-01 12:57:29] INFO - Trainable parameters: 11,173,962
+[2026-02-01 12:57:29] INFO - FLOPs: 557.889M
+[2026-02-01 12:57:29] INFO - Parameters: 11.174M
+[2026-02-01 12:57:29] INFO - Visualization functions defined
+[2026-02-01 12:57:29] INFO - Training functions defined
+[2026-02-01 12:57:29] INFO - Compiling model with torch.compile()
+[2026-02-01 12:57:30] INFO - Starting training...
+[2026-02-01 12:58:52] INFO - Epoch 1/25 - Train Loss: 1.2536, Train Acc: 54.20%, Val Loss: 0.9954, Val Acc: 63.84%
+[2026-02-01 12:58:54] INFO - Saved visualizations for epoch 1
+[2026-02-01 12:58:55] INFO - New best model saved with val acc: 63.84%
+[2026-02-01 12:59:54] INFO - Epoch 2/25 - Train Loss: 0.7780, Train Acc: 72.39%, Val Loss: 0.7531, Val Acc: 72.66%
+[2026-02-01 12:59:55] INFO - New best model saved with val acc: 72.66%
+[2026-02-01 13:01:00] INFO - Epoch 3/25 - Train Loss: 0.5627, Train Acc: 80.24%, Val Loss: 0.7368, Val Acc: 73.54%
+[2026-02-01 13:01:00] INFO - New best model saved with val acc: 73.54%
+[2026-02-01 13:02:08] INFO - Epoch 4/25 - Train Loss: 0.4087, Train Acc: 85.78%, Val Loss: 0.6472, Val Acc: 77.72%
+[2026-02-01 13:02:08] INFO - New best model saved with val acc: 77.72%
+[2026-02-01 13:03:14] INFO - Epoch 5/25 - Train Loss: 0.2801, Train Acc: 90.14%, Val Loss: 0.7688, Val Acc: 75.34%
+[2026-02-01 13:03:17] INFO - Saved visualizations for epoch 5
+[2026-02-01 13:04:22] INFO - Epoch 6/25 - Train Loss: 0.1947, Train Acc: 93.27%, Val Loss: 0.7471, Val Acc: 77.78%
+[2026-02-01 13:04:22] INFO - New best model saved with val acc: 77.78%
+[2026-02-01 13:05:30] INFO - Epoch 7/25 - Train Loss: 0.1367, Train Acc: 95.15%, Val Loss: 0.8152, Val Acc: 78.08%
+[2026-02-01 13:05:30] INFO - New best model saved with val acc: 78.08%
+[2026-02-01 13:06:36] INFO - Epoch 8/25 - Train Loss: 0.1047, Train Acc: 96.32%, Val Loss: 0.8827, Val Acc: 78.40%
+[2026-02-01 13:06:37] INFO - New best model saved with val acc: 78.40%
+[2026-02-01 13:07:41] INFO - Epoch 9/25 - Train Loss: 0.0937, Train Acc: 96.70%, Val Loss: 0.7717, Val Acc: 80.50%
+[2026-02-01 13:07:41] INFO - New best model saved with val acc: 80.50%
+[2026-02-01 13:08:49] INFO - Epoch 10/25 - Train Loss: 0.0764, Train Acc: 97.40%, Val Loss: 0.8548, Val Acc: 78.54%
+[2026-02-01 13:08:52] INFO - Saved visualizations for epoch 10
+[2026-02-01 13:09:58] INFO - Epoch 11/25 - Train Loss: 0.0680, Train Acc: 97.65%, Val Loss: 0.8933, Val Acc: 79.12%
+[2026-02-01 13:11:04] INFO - Epoch 12/25 - Train Loss: 0.0597, Train Acc: 97.89%, Val Loss: 0.8818, Val Acc: 80.40%
+[2026-02-01 13:12:10] INFO - Epoch 13/25 - Train Loss: 0.0565, Train Acc: 98.08%, Val Loss: 0.9520, Val Acc: 79.02%
+[2026-02-01 13:13:15] INFO - Epoch 14/25 - Train Loss: 0.0497, Train Acc: 98.30%, Val Loss: 0.9546, Val Acc: 80.68%
+[2026-02-01 13:13:15] INFO - New best model saved with val acc: 80.68%
+[2026-02-01 13:14:22] INFO - Epoch 15/25 - Train Loss: 0.0469, Train Acc: 98.38%, Val Loss: 0.8927, Val Acc: 80.68%
+[2026-02-01 13:14:26] INFO - Saved visualizations for epoch 15
+[2026-02-01 13:15:32] INFO - Epoch 16/25 - Train Loss: 0.0444, Train Acc: 98.50%, Val Loss: 1.0731, Val Acc: 79.24%
+[2026-02-01 13:16:38] INFO - Epoch 17/25 - Train Loss: 0.0384, Train Acc: 98.64%, Val Loss: 0.9863, Val Acc: 79.84%
+[2026-02-01 13:17:47] INFO - Epoch 18/25 - Train Loss: 0.0385, Train Acc: 98.70%, Val Loss: 1.0395, Val Acc: 79.54%
+[2026-02-01 13:18:51] INFO - Epoch 19/25 - Train Loss: 0.0374, Train Acc: 98.69%, Val Loss: 1.0004, Val Acc: 80.32%
+[2026-02-01 13:19:58] INFO - Epoch 20/25 - Train Loss: 0.0382, Train Acc: 98.67%, Val Loss: 1.0772, Val Acc: 79.76%
+[2026-02-01 13:20:01] INFO - Saved visualizations for epoch 20
+[2026-02-01 13:21:08] INFO - Epoch 21/25 - Train Loss: 0.0303, Train Acc: 98.97%, Val Loss: 1.0477, Val Acc: 80.38%
+[2026-02-01 13:22:15] INFO - Epoch 22/25 - Train Loss: 0.0297, Train Acc: 98.98%, Val Loss: 0.9833, Val Acc: 81.60%
+[2026-02-01 13:22:15] INFO - New best model saved with val acc: 81.60%
+[2026-02-01 13:23:21] INFO - Epoch 23/25 - Train Loss: 0.0311, Train Acc: 98.93%, Val Loss: 1.0123, Val Acc: 80.56%
+[2026-02-01 13:24:28] INFO - Epoch 24/25 - Train Loss: 0.0286, Train Acc: 99.04%, Val Loss: 1.0563, Val Acc: 80.78%
+[2026-02-01 13:25:34] INFO - Epoch 25/25 - Train Loss: 0.0277, Train Acc: 99.07%, Val Loss: 1.0877, Val Acc: 79.70%
+[2026-02-01 13:25:37] INFO - Saved visualizations for epoch 25
+[2026-02-01 13:25:37] INFO - Training completed! Best validation accuracy: 81.60%
+[2026-02-01 13:25:38] INFO - Test Loss: 1.0984, Test Accuracy: 81.33%
+[2026-02-01 13:25:45] INFO - Experiment completed successfully!
