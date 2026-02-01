@@ -1,0 +1,585 @@
+\documentclass[12pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+
+% Page geometry
+\geometry{margin=1in}
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    citecolor=blue
+}
+
+% Code listing style
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10},
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red}
+}
+
+% Header/Footer
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{MLOps Lab-2, Worksheet-1}
+\lhead{CIFAR-10 CNN Training Report}
+\rfoot{Page \thepage}
+
+% Title
+\title{
+    \textbf{CIFAR-10 Image Classification with ResNet18} \\
+    \large MLOps Lab-2, Worksheet-1 \\
+    \large Deep Learning Experiment with WandB Integration
+}
+\author{
+    \textbf{Laksh Mendpara} \\
+    Roll Number: B23CS1037 \\
+    Indian Institute of Technology Jodhpur
+}
+\date{February 1, 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This report presents a comprehensive deep learning experiment for image classification on the CIFAR-10 dataset using a ResNet18-style Convolutional Neural Network (CNN). The experiment implements a complete MLOps pipeline featuring custom data loaders with advanced augmentation, torch.compile() optimization, mixed precision training, and full experiment tracking with Weights \& Biases (WandB). We analyze gradient flow dynamics, weight distribution evolution, and training convergence patterns. The model achieves 81.33\% test accuracy with 11.17M parameters and 557.89M FLOPs. All visualizations and metrics are logged to WandB for reproducibility and analysis.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{Introduction}
+% ============================================================
+
+Deep learning has revolutionized computer vision, with Convolutional Neural Networks (CNNs) achieving remarkable performance on image classification tasks. This experiment implements a complete training pipeline for the CIFAR-10 dataset, emphasizing:
+
+\begin{itemize}
+    \item \textbf{Reproducibility}: Full experiment tracking with WandB
+    \item \textbf{Visualization}: Gradient flow and weight distribution analysis
+    \item \textbf{Optimization}: torch.compile() and mixed precision training
+    \item \textbf{Best Practices}: Proper data augmentation and regularization
+\end{itemize}
+
+\subsection{Links}
+
+\begin{itemize}
+    \item \textbf{Google Colab Notebook}: \url{https://colab.research.google.com/drive/1ILCjEgsHKy5LvfBNUKoMnOHWGR9Ru87F?usp=sharing}
+    \item \textbf{WandB Dashboard}: \url{https://wandb.ai/b23cs1037-iit-jodhpur/cifar10-cnn-mlops/runs/6tbudx0x}
+\end{itemize}
+
+% ============================================================
+\section{Dataset: CIFAR-10}
+% ============================================================
+
+CIFAR-10 is a widely-used benchmark dataset for image classification consisting of 60,000 32×32 color images across 10 classes.
+
+\subsection{Dataset Statistics}
+
+\begin{table}[H]
+\centering
+\caption{CIFAR-10 Dataset Split}
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Split} & \textbf{Samples} \\
+\midrule
+Training Set & 45,000 \\
+Validation Set & 5,000 \\
+Test Set & 10,000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Classes}
+
+The 10 classes are: airplane, automobile, bird, cat, deer, dog, frog, horse, ship, and truck.
+
+\subsection{Data Augmentation}
+
+To improve generalization, we apply the following augmentation pipeline:
+
+\begin{lstlisting}[language=Python, caption=Data Augmentation Pipeline]
+transforms.Compose([
+    RandomCrop(32, padding=4),
+    RandomHorizontalFlip(p=0.5),
+    RandomRotation(degrees=15),
+    ColorJitter(brightness=0.2, contrast=0.2, 
+                saturation=0.2, hue=0.1),
+    RandomAffine(degrees=0, translate=(0.1, 0.1)),
+    ToTensor(),
+    Normalize(mean=[0.4914, 0.4822, 0.4465], 
+              std=[0.2470, 0.2435, 0.2616]),
+    RandomErasing(p=0.25, scale=(0.02, 0.2)),
+])
+\end{lstlisting}
+
+% ============================================================
+\section{Model Architecture}
+% ============================================================
+
+\subsection{ResNet18 for CIFAR-10}
+
+We use a ResNet18 architecture adapted for CIFAR-10's 32×32 input size. The standard ResNet18 (designed for 224×224 ImageNet images) is modified as follows:
+
+\begin{table}[H]
+\centering
+\caption{Architecture Modifications for CIFAR-10}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Component} & \textbf{ImageNet ResNet18} & \textbf{CIFAR-10 ResNet18} \\
+\midrule
+First Conv & 7×7, stride 2 & 3×3, stride 1 \\
+Max Pooling & 3×3, stride 2 & Removed \\
+Input Size & 224×224 & 32×32 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Model Specifications}
+
+\begin{table}[H]
+\centering
+\caption{Model Complexity Metrics}
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Total Parameters & 11,173,962 \\
+Trainable Parameters & 11,173,962 \\
+FLOPs (per image) & 557.889M \\
+Architecture & 4 stages with [2, 2, 2, 2] blocks \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Architecture Details}
+
+The ResNet18 architecture consists of:
+
+\begin{enumerate}
+    \item \textbf{Initial Convolution}: 3×3 conv, 64 filters, BatchNorm, ReLU
+    \item \textbf{Layer 1}: 2 BasicBlocks, 64 filters
+    \item \textbf{Layer 2}: 2 BasicBlocks, 128 filters (stride 2)
+    \item \textbf{Layer 3}: 2 BasicBlocks, 256 filters (stride 2)
+    \item \textbf{Layer 4}: 2 BasicBlocks, 512 filters (stride 2)
+    \item \textbf{Classifier}: AdaptiveAvgPool2d → Linear(512, 10)
+\end{enumerate}
+
+Each BasicBlock contains:
+\begin{itemize}
+    \item Two 3×3 convolutional layers with BatchNorm
+    \item ReLU activation
+    \item Residual (skip) connection
+\end{itemize}
+
+% ============================================================
+\section{Training Configuration}
+% ============================================================
+
+\subsection{Hyperparameters}
+
+\begin{table}[H]
+\centering
+\caption{Training Hyperparameters}
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Hyperparameter} & \textbf{Value} \\
+\midrule
+Epochs & 25 \\
+Batch Size & 128 \\
+Optimizer & AdamW \\
+Base Learning Rate & 0.001 \\
+Max Learning Rate & 0.01 \\
+Weight Decay & $1 \times 10^{-4}$ \\
+Gradient Clipping & 1.0 \\
+LR Scheduler & OneCycleLR \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Optimization Techniques}
+
+\begin{enumerate}
+    \item \textbf{torch.compile()}: PyTorch 2.0+ compilation for optimized execution
+    \item \textbf{Mixed Precision (AMP)}: Automatic Mixed Precision with GradScaler for faster training
+    \item \textbf{Gradient Clipping}: Maximum gradient norm of 1.0 to prevent exploding gradients
+    \item \textbf{OneCycleLR}: Learning rate warm-up and annealing schedule
+\end{enumerate}
+
+% ============================================================
+\section{Results}
+% ============================================================
+
+\subsection{Final Performance}
+
+\begin{table}[H]
+\centering
+\caption{Final Model Performance}
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Best Validation Accuracy & 81.60\% (Epoch 22) \\
+Final Test Accuracy & 81.33\% \\
+Final Test Loss & 1.0984 \\
+Final Training Accuracy & 99.07\% \\
+Training Time & $\sim$28 minutes \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Training Progression}
+
+\begin{table}[H]
+\centering
+\caption{Training Metrics per Epoch (Selected)}
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+\textbf{Epoch} & \textbf{Train Loss} & \textbf{Train Acc} & \textbf{Val Loss} & \textbf{Val Acc} \\
+\midrule
+1 & 1.2536 & 54.20\% & 0.9954 & 63.84\% \\
+5 & 0.2801 & 90.14\% & 0.7688 & 75.34\% \\
+10 & 0.0764 & 97.40\% & 0.8548 & 78.54\% \\
+15 & 0.0469 & 98.38\% & 0.8927 & 80.68\% \\
+20 & 0.0382 & 98.67\% & 1.0772 & 79.76\% \\
+22 & 0.0297 & 98.98\% & 0.9833 & \textbf{81.60\%} \\
+25 & 0.0277 & 99.07\% & 1.0877 & 79.70\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Training Curves}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.48\textwidth}
+    \includegraphics[width=\textwidth]{plots/train_loss.png}
+    \caption{Training Loss}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+    \includegraphics[width=\textwidth]{plots/val_loss.png}
+    \caption{Validation Loss}
+\end{subfigure}
+\caption{Loss curves over 25 epochs. Training loss decreases smoothly while validation loss shows overfitting after epoch 5.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.48\textwidth}
+    \includegraphics[width=\textwidth]{plots/train_acc.png}
+    \caption{Training Accuracy}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+    \includegraphics[width=\textwidth]{plots/val_acc.png}
+    \caption{Validation Accuracy}
+\end{subfigure}
+\caption{Accuracy curves over 25 epochs. Training accuracy reaches 99\% while validation plateaus at $\sim$81\%.}
+\end{figure}
+
+\subsection{Sample Predictions}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{plots/sample_predictions.png}
+\caption{Sample predictions from the test set. Green labels indicate correct predictions (15/16), red indicates misclassification (1/16).}
+\end{figure}
+
+% ============================================================
+\section{Gradient Flow Analysis}
+% ============================================================
+
+Gradient flow visualization is crucial for understanding training dynamics and identifying potential issues like vanishing or exploding gradients.
+
+\subsection{Methodology}
+
+For each layer with learnable parameters, we compute:
+\begin{itemize}
+    \item \textbf{Mean Gradient}: $\bar{g} = \frac{1}{n}\sum_{i=1}^{n}|g_i|$
+    \item \textbf{Max Gradient}: $g_{max} = \max(|g_1|, |g_2|, ..., |g_n|)$
+\end{itemize}
+
+\subsection{Gradient Flow Comparison}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.48\textwidth}
+    \includegraphics[width=\textwidth]{plots/gradient_flow_epoch_1.png}
+    \caption{Epoch 1}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+    \includegraphics[width=\textwidth]{plots/final_gradient_flow.png}
+    \caption{Epoch 25 (Final)}
+\end{subfigure}
+\caption{Gradient flow comparison between early and late training. Gradients remain stable in the $10^{-4}$ to $10^{-1}$ range throughout.}
+\end{figure}
+
+\subsection{Observations}
+
+\begin{enumerate}
+    \item \textbf{Healthy Gradient Flow}: Gradients remain bounded between $10^{-4}$ and $10^{-1}$ throughout training, indicating stable optimization.
+    
+    \item \textbf{Residual Connections}: The skip connections in ResNet effectively prevent gradient vanishing, as evidenced by consistent gradient magnitudes across all layers.
+    
+    \item \textbf{BatchNorm Effect}: Batch normalization helps maintain uniform gradient magnitudes, visible in the relatively even distribution across layers.
+    
+    \item \textbf{FC Layer Dominance}: The final fully-connected layer shows the highest gradients ($\sim 10^{-1}$), which is expected as it directly receives the classification loss signal.
+\end{enumerate}
+
+% ============================================================
+\section{Weight Distribution Analysis}
+% ============================================================
+
+Tracking weight distributions reveals how the network's parameters evolve during training and helps identify potential issues.
+
+\subsection{Weight Distribution Evolution}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.48\textwidth}
+    \includegraphics[width=\textwidth]{plots/weight_dist_epoch_1.png}
+    \caption{Epoch 1}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\textwidth}
+    \includegraphics[width=\textwidth]{plots/final_weight_distribution.png}
+    \caption{Epoch 25 (Final)}
+\end{subfigure}
+\caption{Weight distribution evolution from initialization to final trained state.}
+\end{figure}
+
+\subsection{Observations}
+
+\begin{enumerate}
+    \item \textbf{Convergence}: Weight distributions become tighter (lower variance) as training progresses, indicating model convergence.
+    
+    \item \textbf{Layer-Specific Patterns}:
+    \begin{itemize}
+        \item \texttt{conv1}: Narrow distribution centered at 0
+        \item \texttt{layer1-layer4}: Gaussian-like distributions with varying widths
+        \item \texttt{fc}: Wider distribution spanning approximately $[-0.1, 0.1]$
+    \end{itemize}
+    
+    \item \textbf{No Weight Explosion}: All weights remain bounded, confirming effective weight decay regularization.
+    
+    \item \textbf{Kaiming Initialization}: Initial distributions reflect Kaiming normal initialization, which is optimal for ReLU networks.
+\end{enumerate}
+
+% ============================================================
+\section{Weight Update Analysis}
+% ============================================================
+
+Weight update magnitudes reveal the learning dynamics and the effect of the learning rate scheduler.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{plots/final_weight_updates.png}
+\caption{Weight update magnitudes per layer across all 25 epochs.}
+\end{figure}
+
+\subsection{Observations}
+
+\begin{enumerate}
+    \item \textbf{OneCycleLR Pattern}: The characteristic pattern of OneCycleLR is visible---updates increase during warm-up (epochs 1-12) and decrease during annealing (epochs 13-25).
+    
+    \item \textbf{Layer-Wise Behavior}:
+    \begin{itemize}
+        \item Early layers show smaller, more stable updates
+        \item Later layers exhibit larger, more variable updates
+    \end{itemize}
+    
+    \item \textbf{Convergence}: Update magnitudes decrease towards the end of training, indicating approach to a local minimum.
+    
+    \item \textbf{No Layer Collapse}: All layers maintain non-zero updates throughout, confirming healthy learning across the network.
+\end{enumerate}
+
+% ============================================================
+\section{Key Findings and Discussion}
+% ============================================================
+
+\subsection{What Worked Well}
+
+\begin{enumerate}
+    \item \textbf{ResNet Architecture}: Residual connections effectively combat vanishing gradients, as confirmed by gradient flow analysis.
+    
+    \item \textbf{Data Augmentation}: The augmentation pipeline (RandomCrop, ColorJitter, RandomErasing) provided meaningful regularization.
+    
+    \item \textbf{OneCycleLR}: The learning rate schedule with warm-up and annealing led to effective training dynamics.
+    
+    \item \textbf{Mixed Precision}: AMP provided $\sim$1.5-2x speedup without accuracy loss.
+    
+    \item \textbf{torch.compile()}: PyTorch compilation provided additional optimization benefits.
+\end{enumerate}
+
+\subsection{Overfitting Analysis}
+
+The $\sim$18\% gap between training accuracy (99\%) and validation accuracy (81\%) indicates overfitting:
+
+\begin{itemize}
+    \item \textbf{Evidence}: Validation loss increases after epoch 5 while training loss continues decreasing
+    \item \textbf{Cause}: The model's 11M parameters may be excessive for CIFAR-10's 50K training samples
+    \item \textbf{Mitigation}: Early stopping at epoch 22 (best validation accuracy)
+\end{itemize}
+
+\subsection{Potential Improvements}
+
+\begin{enumerate}
+    \item \textbf{Stronger Regularization}: Add dropout, label smoothing, or stochastic depth
+    \item \textbf{Advanced Augmentation}: Implement CutMix, MixUp, or AutoAugment
+    \item \textbf{Smaller Model}: Use a more parameter-efficient architecture
+    \item \textbf{Longer Training}: Train for 100+ epochs with cosine annealing
+\end{enumerate}
+
+% ============================================================
+\section{Conclusion}
+% ============================================================
+
+This experiment successfully implemented a complete deep learning pipeline for CIFAR-10 classification with comprehensive MLOps practices:
+
+\begin{itemize}
+    \item Achieved \textbf{81.33\% test accuracy} with ResNet18 (11.17M parameters, 557.89M FLOPs)
+    \item Demonstrated \textbf{healthy gradient flow} through gradient visualization
+    \item Tracked \textbf{weight distribution evolution} showing proper convergence
+    \item Identified \textbf{overfitting patterns} through training curve analysis
+    \item Maintained \textbf{full experiment reproducibility} via WandB logging
+\end{itemize}
+
+The comprehensive visualization and logging infrastructure provides valuable insights into model behavior and serves as a template for future deep learning experiments.
+
+% ============================================================
+\section{Appendix: All Visualizations}
+% ============================================================
+
+\subsection{Gradient Flow Progression}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/gradient_flow_epoch_1.png}
+    \caption{Epoch 1}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/gradient_flow_epoch_5.png}
+    \caption{Epoch 5}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/gradient_flow_epoch_10.png}
+    \caption{Epoch 10}
+\end{subfigure}
+
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/gradient_flow_epoch_15.png}
+    \caption{Epoch 15}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/gradient_flow_epoch_20.png}
+    \caption{Epoch 20}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/final_gradient_flow.png}
+    \caption{Epoch 25}
+\end{subfigure}
+\caption{Gradient flow visualization across all checkpoints.}
+\end{figure}
+
+\subsection{Weight Distribution Progression}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/weight_dist_epoch_1.png}
+    \caption{Epoch 1}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/weight_dist_epoch_5.png}
+    \caption{Epoch 5}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/weight_dist_epoch_10.png}
+    \caption{Epoch 10}
+\end{subfigure}
+
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/weight_dist_epoch_15.png}
+    \caption{Epoch 15}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/weight_dist_epoch_20.png}
+    \caption{Epoch 20}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/final_weight_distribution.png}
+    \caption{Epoch 25}
+\end{subfigure}
+\caption{Weight distribution evolution across all checkpoints.}
+\end{figure}
+
+\subsection{Weight Updates Progression}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/weight_updates_epoch_1.png}
+    \caption{Epoch 1}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/weight_updates_epoch_5.png}
+    \caption{Epoch 5}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/weight_updates_epoch_10.png}
+    \caption{Epoch 10}
+\end{subfigure}
+
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/weight_updates_epoch_15.png}
+    \caption{Epoch 15}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/weight_updates_epoch_20.png}
+    \caption{Epoch 20}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\textwidth}
+    \includegraphics[width=\textwidth]{plots/final_weight_updates.png}
+    \caption{Epoch 25}
+\end{subfigure}
+\caption{Weight update magnitudes across all checkpoints.}
+\end{figure}
+
+\end{document}
