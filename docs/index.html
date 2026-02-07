@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -41,11 +41,7 @@
       }
 
       body {
-        font-family:
-          "Inter",
-          -apple-system,
-          BlinkMacSystemFont,
-          sans-serif;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
         background: var(--bg-dark);
         color: var(--text-primary);
         min-height: 100vh;
@@ -70,8 +66,7 @@
         left: -50%;
         width: 200%;
         height: 200%;
-        background:
-          radial-gradient(
+        background: radial-gradient(
             circle at 20% 80%,
             rgba(99, 102, 241, 0.15) 0%,
             transparent 50%
@@ -519,6 +514,21 @@
               "https://github.com/Laksh-Mendpara/MLOps-Laksh-B23CS1037/blob/Assignment-1/report.pdf",
           },
         },
+        {
+          id: 2,
+          title: "Data Contracts & YAML Implementation",
+          subtitle: "MLOps Assignment 2",
+          type: "assignment",
+          description:
+            "Implemented data contracts for four industry scenarios (Ride-Share, E-commerce, IoT, FinTech) following the Open Data Contract Standard (ODCS). Created comprehensive validation infrastructure with 18 automated checks ensuring quality, governance, and reliability.",
+          learnings:
+            "Demonstrated logical-physical separation, circuit breaker patterns, PII governance, and automated quality validation across diverse data domains.",
+          links: {
+            github: "https://github.com/Laksh-Mendpara/MLOps-Laksh-B23CS1037",
+            report:
+              "https://github.com/Laksh-Mendpara/MLOps-Laksh-B23CS1037/blob/Assignment-2/report.pdf",
+          },
+        },
       ];
 
       const worksheets = [
@@ -555,7 +565,9 @@
           <div className="card">
             <div className="card-header">
               <span
-                className={`card-badge ${isWorksheet ? "badge-worksheet" : "badge-assignment"}`}
+                className={`card-badge ${
+                  isWorksheet ? "badge-worksheet" : "badge-assignment"
+                }`}
               >
                 {isWorksheet ? "Lab Worksheet" : "Assignment"}
               </span>
@@ -658,13 +670,17 @@
                   All Work
                 </button>
                 <button
-                  className={`nav-btn ${activeTab === "assignments" ? "active" : ""}`}
+                  className={`nav-btn ${
+                    activeTab === "assignments" ? "active" : ""
+                  }`}
                   onClick={() => setActiveTab("assignments")}
                 >
                   Assignments
                 </button>
                 <button
-                  className={`nav-btn ${activeTab === "worksheets" ? "active" : ""}`}
+                  className={`nav-btn ${
+                    activeTab === "worksheets" ? "active" : ""
+                  }`}
                   onClick={() => setActiveTab("worksheets")}
                 >
                   Lab Worksheets
