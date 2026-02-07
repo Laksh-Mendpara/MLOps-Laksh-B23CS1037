@@ -1,0 +1,10 @@
+[project]
+name = "mlops-laksh-b23cs1037"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "yamllint>=1.38.0",
+    "pyyaml>=6.0.0",
+]
