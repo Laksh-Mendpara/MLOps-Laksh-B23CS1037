@@ -1,0 +1,12 @@
+torch==2.2.0
+torchvision==0.17.0
+numpy==1.26.4
+scikit-learn==1.6.1
+Pillow==11.1.0
+matplotlib==3.9.4
+seaborn==0.13.2
+datasets==3.3.2
+huggingface_hub==0.27.0
+wandb==0.19.6
+transformers==4.49.0
+python-dotenv==1.0.1

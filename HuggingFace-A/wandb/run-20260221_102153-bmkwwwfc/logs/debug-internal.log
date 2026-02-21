@@ -1,0 +1,16 @@
+{"time":"2026-02-21T10:21:53.401614232Z","level":"INFO","msg":"stream: starting","core version":"0.19.6","symlink path":"/workspace/wandb/run-20260221_102153-bmkwwwfc/logs/debug-core.log"}
+{"time":"2026-02-21T10:21:53.509633538Z","level":"INFO","msg":"created new stream","id":"bmkwwwfc"}
+{"time":"2026-02-21T10:21:53.509688038Z","level":"INFO","msg":"stream: started","id":"bmkwwwfc"}
+{"time":"2026-02-21T10:21:53.509748738Z","level":"INFO","msg":"writer: Do: started","stream_id":"bmkwwwfc"}
+{"time":"2026-02-21T10:21:53.509795829Z","level":"INFO","msg":"handler: started","stream_id":"bmkwwwfc"}
+{"time":"2026-02-21T10:21:53.509880449Z","level":"INFO","msg":"sender: started","stream_id":"bmkwwwfc"}
+{"time":"2026-02-21T10:21:54.370026222Z","level":"INFO","msg":"Starting system monitor"}
+{"time":"2026-02-21T10:23:24.711647558Z","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2026-02-21T10:23:24.712616984Z","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2026-02-21T10:23:25.674652029Z","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"updating run config","runtime_seconds":0.243144339}],"total_operations":1}}
+{"time":"2026-02-21T10:23:26.557189651Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-02-21T10:23:27.943022291Z","level":"INFO","msg":"stream: closing","id":"bmkwwwfc"}
+{"time":"2026-02-21T10:23:27.943048901Z","level":"INFO","msg":"handler: closed","stream_id":"bmkwwwfc"}
+{"time":"2026-02-21T10:23:27.943063502Z","level":"INFO","msg":"writer: Close: closed","stream_id":"bmkwwwfc"}
+{"time":"2026-02-21T10:23:27.943110492Z","level":"INFO","msg":"sender: closed","stream_id":"bmkwwwfc"}
+{"time":"2026-02-21T10:23:27.943175392Z","level":"INFO","msg":"stream: closed","id":"bmkwwwfc"}
