@@ -1,0 +1,38 @@
+# -----------------------------------------------------------------------
+# Task 9 Dockerfile – Production evaluation image
+#
+# The model is NOT baked in; it is pulled at runtime from the Hugging Face Hub.
+# Set the HF_REPO environment variable (or the default in entrypoint.sh).
+#
+# Build:
+#   docker build -f Dockerfile.eval -t genre-eval .
+#
+# Run (override HF_REPO if needed):
+#   docker run --rm \
+#       -e HF_REPO=laksh-B23CS1037/distilbert-book-genre \
+#       -v $(pwd)/results:/app/results \
+#       genre-eval
+# -----------------------------------------------------------------------
+
+FROM python:3.11-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        git \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY src/ ./src/
+
+# Entrypoint script that runs evaluation automatically
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Persist evaluation results
+VOLUME ["/app/results"]
+
+ENTRYPOINT ["/entrypoint.sh"]

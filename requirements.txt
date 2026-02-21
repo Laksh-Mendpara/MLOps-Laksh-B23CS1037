@@ -1,0 +1,21 @@
+# Core ML / NLP
+torch>=2.0.0
+transformers>=4.40.0
+datasets>=2.19.0
+huggingface_hub>=0.23.0
+accelerate>=0.29.0
+tokenizers>=0.15.0
+sentencepiece>=0.2.0
+
+# Data / evaluation
+scikit-learn>=1.4.0
+numpy>=1.26.0
+pandas>=2.2.0
+requests>=2.31.0
+
+# Visualisation (used in notebook / optional for scripts)
+matplotlib>=3.8.0
+seaborn>=0.13.0
+
+# Utilities
+gdown>=5.1.0

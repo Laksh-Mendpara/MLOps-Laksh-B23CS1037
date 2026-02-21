@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Model artifacts (large files; link via HF Hub instead)
+distilbert-reviews-genres/
+*.pickle
+*.pkl
+*.pt
+*.bin
+*.safetensors
+
+# Training artefacts (keep results JSON, ignore TF event files)
+results/tmp_eval/
+logs/
+runs/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Environment variables / secrets
+.env
+*.pem
