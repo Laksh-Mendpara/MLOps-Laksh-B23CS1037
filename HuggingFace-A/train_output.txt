@@ -1,0 +1,50 @@
+wandb: Currently logged in as: b23cs1037 (b23cs1037-iit-jodhpur) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.6
+wandb: Run data is saved locally in /workspace/wandb/run-20260221_103943-yimt0xa2
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run resnet18-pretrained
+wandb: ⭐️ View project at https://wandb.ai/b23cs1037-iit-jodhpur/stl10-classification
+wandb: 🚀 View run at https://wandb.ai/b23cs1037-iit-jodhpur/stl10-classification/runs/yimt0xa2
+Using device: cuda
+Loading dataset from HuggingFace...
+Generating train split:   0%|          | 0/5000 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 5000/5000 [00:00<00:00, 16271.99 examples/s]Generating train split: 100%|██████████| 5000/5000 [00:00<00:00, 15667.67 examples/s]
+Generating validation split:   0%|          | 0/500 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 500/500 [00:00<00:00, 30867.25 examples/s]
+Generating test split:   0%|          | 0/1000 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 1000/1000 [00:00<00:00, 15982.08 examples/s]
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet18_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet18_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Downloading: "https://download.pytorch.org/models/resnet18-f37072fd.pth" to /root/.cache/torch/hub/checkpoints/resnet18-f37072fd.pth
+Dataset splits: ['train', 'validation', 'test']
+split keys - ['train', 'validation', 'test']
+Train: 5000 | Val: 500 | Test: 1000
+  0%|          | 0.00/44.7M [00:00<?, ?B/s]  6%|▋         | 2.89M/44.7M [00:00<00:01, 29.0MB/s] 19%|█▉        | 8.56M/44.7M [00:00<00:00, 43.6MB/s] 32%|███▏      | 14.4M/44.7M [00:00<00:00, 51.1MB/s] 44%|████▎     | 19.5M/44.7M [00:00<00:00, 51.8MB/s] 55%|█████▍    | 24.4M/44.7M [00:00<00:00, 51.2MB/s] 66%|██████▌   | 29.5M/44.7M [00:00<00:00, 51.7MB/s] 77%|███████▋  | 34.6M/44.7M [00:00<00:00, 51.5MB/s] 90%|████████▉ | 40.0M/44.7M [00:00<00:00, 53.3MB/s]100%|██████████| 44.7M/44.7M [00:00<00:00, 52.0MB/s]
+Epoch [1/1] Train Loss: 0.4987 | Train Acc: 84.88% | Val Loss: 0.2389 | Val Acc: 92.20%
+  → Best model saved (Val Acc: 92.20%)
+
+Training complete! Best Val Acc: 92.20%
+
+Pushing best model to HuggingFace Hub...
+best_model.pth:   0%|          | 0.00/44.8M [00:00<?, ?B/s]best_model.pth:   0%|          | 8.19k/44.8M [00:00<1:09:54, 10.7kB/s]best_model.pth:   5%|▌         | 2.46M/44.8M [00:00<00:11, 3.65MB/s]  best_model.pth:  10%|▉         | 4.45M/44.8M [00:01<00:08, 4.73MB/s]best_model.pth:  23%|██▎       | 10.2M/44.8M [00:01<00:02, 12.2MB/s]best_model.pth:  28%|██▊       | 12.4M/44.8M [00:02<00:05, 6.09MB/s]best_model.pth:  31%|███       | 13.9M/44.8M [00:02<00:04, 6.28MB/s]best_model.pth:  34%|███▍      | 15.3M/44.8M [00:02<00:04, 7.05MB/s]best_model.pth:  37%|███▋      | 16.5M/44.8M [00:03<00:07, 4.00MB/s]best_model.pth:  46%|████▌     | 20.4M/44.8M [00:03<00:03, 7.08MB/s]best_model.pth:  57%|█████▋    | 25.4M/44.8M [00:03<00:01, 11.0MB/s]best_model.pth:  61%|██████    | 27.4M/44.8M [00:04<00:03, 5.44MB/s]best_model.pth:  64%|██████▍   | 28.9M/44.8M [00:04<00:02, 5.79MB/s]best_model.pth:  67%|██████▋   | 30.2M/44.8M [00:05<00:02, 5.78MB/s]best_model.pth:  71%|███████▏  | 32.0M/44.8M [00:05<00:03, 4.26MB/s]best_model.pth: 100%|██████████| 44.8M/44.8M [00:06<00:00, 7.18MB/s]
+wandb:                                                                                
+wandb: 
+wandb: Run history:
+wandb:      epoch ▁
+wandb:  train_acc ▁
+wandb: train_loss ▁
+wandb:    val_acc ▁
+wandb:   val_loss ▁
+wandb: 
+wandb: Run summary:
+wandb:      epoch 1
+wandb:  train_acc 84.88
+wandb: train_loss 0.49866
+wandb:    val_acc 92.2
+wandb:   val_loss 0.23886
+wandb: 
+wandb: 🚀 View run resnet18-pretrained at: https://wandb.ai/b23cs1037-iit-jodhpur/stl10-classification/runs/yimt0xa2
+wandb: ⭐️ View project at: https://wandb.ai/b23cs1037-iit-jodhpur/stl10-classification
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260221_103943-yimt0xa2/logs
+Model pushed to https://huggingface.co/Laksh-Mendpara/minorexam

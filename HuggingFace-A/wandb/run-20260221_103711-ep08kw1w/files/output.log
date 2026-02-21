@@ -1,0 +1,61 @@
+Loading dataset from HuggingFace...
+README.md: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 723/723 [00:00<00:00, 2.04MB/s]
+train-00000-of-00001.parquet: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████| 88.9M/88.9M [00:01<00:00, 63.3MB/s]
+validation-00000-of-00001.parquet: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 8.82M/8.82M [00:00<00:00, 74.8MB/s]
+test-00000-of-00001.parquet: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████| 17.8M/17.8M [00:00<00:00, 76.8MB/s]
+Generating train split: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 5000/5000 [00:00<00:00, 15877.87 examples/s]
+Generating validation split: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████| 500/500 [00:00<00:00, 30085.24 examples/s]
+Generating test split: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████| 1000/1000 [00:00<00:00, 20430.52 examples/s]
+Dataset splits: ['train', 'validation', 'test']
+split keys - ['train', 'validation', 'test']
+Train: 5000 | Val: 500 | Test: 1000
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet18_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet18_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Downloading: "https://download.pytorch.org/models/resnet18-f37072fd.pth" to /root/.cache/torch/hub/checkpoints/resnet18-f37072fd.pth
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 44.7M/44.7M [00:00<00:00, 101MB/s]
+Epoch [1/1] Train Loss: 0.4845 | Train Acc: 85.74% | Val Loss: 0.2328 | Val Acc: 91.60%
+  → Best model saved (Val Acc: 91.60%)
+
+Training complete! Best Val Acc: 91.60%
+
+Pushing best model to HuggingFace Hub...
+Traceback (most recent call last):
+  File "/opt/conda/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 406, in hf_raise_for_status
+    response.raise_for_status()
+  File "/opt/conda/lib/python3.10/site-packages/requests/models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://huggingface.co/api/models/minorexam/preupload/main
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/train.py", line 226, in <module>
+    api.upload_file(path_or_fileobj=best_model_path, path_in_repo="model.pth",
+  File "/opt/conda/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/huggingface_hub/hf_api.py", line 1518, in _inner
+    return fn(self, *args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/huggingface_hub/hf_api.py", line 4439, in upload_file
+    commit_info = self.create_commit(
+  File "/opt/conda/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/huggingface_hub/hf_api.py", line 1518, in _inner
+    return fn(self, *args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/huggingface_hub/hf_api.py", line 4005, in create_commit
+    self.preupload_lfs_files(
+  File "/opt/conda/lib/python3.10/site-packages/huggingface_hub/hf_api.py", line 4218, in preupload_lfs_files
+    _fetch_upload_modes(
+  File "/opt/conda/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/huggingface_hub/_commit_api.py", line 536, in _fetch_upload_modes
+    hf_raise_for_status(resp)
+  File "/opt/conda/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 454, in hf_raise_for_status
+    raise _format(RepositoryNotFoundError, message, response) from e
+huggingface_hub.errors.RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-69998ae9-0262c94260079ad83998ce12;25a10999-b9aa-437d-ba07-c594b07b1684)
+
+Repository Not Found for url: https://huggingface.co/api/models/minorexam/preupload/main.
+Please make sure you specified the correct `repo_id` and `repo_type`.
+If you are trying to access a private or gated repo, make sure you are authenticated.
+Note: Creating a commit assumes that the repo already exists on the Huggingface Hub. Please use `create_repo` if it's not the case.

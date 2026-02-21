@@ -1,0 +1,16 @@
+{"time":"2026-02-21T10:35:30.003553251Z","level":"INFO","msg":"stream: starting","core version":"0.19.6","symlink path":"/workspace/wandb/run-20260221_103529-gunsid3k/logs/debug-core.log"}
+{"time":"2026-02-21T10:35:30.111331911Z","level":"INFO","msg":"created new stream","id":"gunsid3k"}
+{"time":"2026-02-21T10:35:30.111376Z","level":"INFO","msg":"stream: started","id":"gunsid3k"}
+{"time":"2026-02-21T10:35:30.11143751Z","level":"INFO","msg":"writer: Do: started","stream_id":"gunsid3k"}
+{"time":"2026-02-21T10:35:30.111501149Z","level":"INFO","msg":"sender: started","stream_id":"gunsid3k"}
+{"time":"2026-02-21T10:35:30.111596358Z","level":"INFO","msg":"handler: started","stream_id":"gunsid3k"}
+{"time":"2026-02-21T10:35:30.72333472Z","level":"INFO","msg":"Starting system monitor"}
+{"time":"2026-02-21T10:35:46.405133056Z","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2026-02-21T10:35:46.406039025Z","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2026-02-21T10:35:47.405870347Z","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"uploading output.log","runtime_seconds":0.627080953,"progress":"4.2KB/4.2KB"},{"desc":"uploading config.yaml","runtime_seconds":0.250181513,"progress":"873B/873B"}],"total_operations":2}}
+{"time":"2026-02-21T10:35:48.277781822Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-02-21T10:35:49.659539241Z","level":"INFO","msg":"stream: closing","id":"gunsid3k"}
+{"time":"2026-02-21T10:35:49.659567581Z","level":"INFO","msg":"handler: closed","stream_id":"gunsid3k"}
+{"time":"2026-02-21T10:35:49.65958522Z","level":"INFO","msg":"writer: Close: closed","stream_id":"gunsid3k"}
+{"time":"2026-02-21T10:35:49.65963162Z","level":"INFO","msg":"sender: closed","stream_id":"gunsid3k"}
+{"time":"2026-02-21T10:35:49.659706249Z","level":"INFO","msg":"stream: closed","id":"gunsid3k"}

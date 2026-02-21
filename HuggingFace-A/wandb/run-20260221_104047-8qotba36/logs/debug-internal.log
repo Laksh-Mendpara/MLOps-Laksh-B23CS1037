@@ -1,0 +1,16 @@
+{"time":"2026-02-21T10:40:48.006922698Z","level":"INFO","msg":"stream: starting","core version":"0.19.6","symlink path":"/workspace/wandb/run-20260221_104047-8qotba36/logs/debug-core.log"}
+{"time":"2026-02-21T10:40:48.114878488Z","level":"INFO","msg":"created new stream","id":"8qotba36"}
+{"time":"2026-02-21T10:40:48.114921328Z","level":"INFO","msg":"stream: started","id":"8qotba36"}
+{"time":"2026-02-21T10:40:48.115370174Z","level":"INFO","msg":"writer: Do: started","stream_id":"8qotba36"}
+{"time":"2026-02-21T10:40:48.115399734Z","level":"INFO","msg":"sender: started","stream_id":"8qotba36"}
+{"time":"2026-02-21T10:40:48.115475704Z","level":"INFO","msg":"handler: started","stream_id":"8qotba36"}
+{"time":"2026-02-21T10:40:48.662479797Z","level":"INFO","msg":"Starting system monitor"}
+{"time":"2026-02-21T10:41:02.964379032Z","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2026-02-21T10:41:02.965317155Z","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2026-02-21T10:41:03.965287173Z","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"uploading media/images/test_samples_2_42aebc8bc645206974be.png","runtime_seconds":0.671114139,"progress":"61.9KB/61.9KB"},{"desc":"uploading media/images/test_samples_2_4d139e0891f66cb918e9.png","runtime_seconds":0.671096179,"progress":"45.1KB/45.1KB"},{"desc":"uploading media/images/test_samples_2_1ba2213dbbc5e35a2082.png","runtime_seconds":0.67109166,"progress":"54.4KB/54.4KB"},{"desc":"uploading media/images/test_samples_2_f0cabd8215eee983d3cf.png","runtime_seconds":0.67108801,"progress":"71.7KB/71.7KB"},{"desc":"uploading media/images/test_samples_2_70249604c485d4b045c8.png","runtime_seconds":0.671084399,"progress":"41.7KB/41.7KB"},{"desc":"uploading media/images/test_samples_2_3c32868d9d587df7e2c6.png","runtime_seconds":0.671078979,"progress":"72.3KB/72.3KB"},{"desc":"uploading media/images/test_samples_2_5d9fae197b234e94fe1e.png","runtime_seconds":0.671073509,"progress":"71.5KB/71.5KB"},{"desc":"uploading media/images/test_samples_2_4e69cec939e8ac965696.png","runtime_seconds":0.671068779,"progress":"75.0KB/75.0KB"},{"desc":"uploading media/images/test_samples_2_afe34e7b6c53a6d6d950.png","runtime_seconds":0.671060349,"progress":"80.3KB/80.3KB"},{"desc":"uploading media/images/test_samples_2_d1f2514fee4488dfe312.png","runtime_seconds":0.671053469,"progress":"54.2KB/54.2KB"}],"total_operations":21}}
+{"time":"2026-02-21T10:41:04.394684013Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-02-21T10:41:05.828005903Z","level":"INFO","msg":"stream: closing","id":"8qotba36"}
+{"time":"2026-02-21T10:41:05.828023403Z","level":"INFO","msg":"handler: closed","stream_id":"8qotba36"}
+{"time":"2026-02-21T10:41:05.828032562Z","level":"INFO","msg":"writer: Close: closed","stream_id":"8qotba36"}
+{"time":"2026-02-21T10:41:05.828086042Z","level":"INFO","msg":"sender: closed","stream_id":"8qotba36"}
+{"time":"2026-02-21T10:41:05.828139512Z","level":"INFO","msg":"stream: closed","id":"8qotba36"}

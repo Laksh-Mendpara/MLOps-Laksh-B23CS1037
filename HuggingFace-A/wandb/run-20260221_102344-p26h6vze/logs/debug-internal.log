@@ -1,0 +1,16 @@
+{"time":"2026-02-21T10:23:44.292760681Z","level":"INFO","msg":"stream: starting","core version":"0.19.6","symlink path":"/workspace/wandb/run-20260221_102344-p26h6vze/logs/debug-core.log"}
+{"time":"2026-02-21T10:23:44.400780236Z","level":"INFO","msg":"created new stream","id":"p26h6vze"}
+{"time":"2026-02-21T10:23:44.400819716Z","level":"INFO","msg":"stream: started","id":"p26h6vze"}
+{"time":"2026-02-21T10:23:44.400904567Z","level":"INFO","msg":"writer: Do: started","stream_id":"p26h6vze"}
+{"time":"2026-02-21T10:23:44.400930807Z","level":"INFO","msg":"sender: started","stream_id":"p26h6vze"}
+{"time":"2026-02-21T10:23:44.400978897Z","level":"INFO","msg":"handler: started","stream_id":"p26h6vze"}
+{"time":"2026-02-21T10:23:45.085157966Z","level":"INFO","msg":"Starting system monitor"}
+{"time":"2026-02-21T10:23:56.533561047Z","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2026-02-21T10:23:56.533991309Z","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2026-02-21T10:23:57.534311012Z","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"uploading media/images/classwise_accuracy_bar_1_8ca7f675750b0ecb8593.png","runtime_seconds":0.961338693,"progress":"35.4KB/35.4KB"},{"desc":"uploading media/images/test_samples_2_94da19aa9fa52ffed920.png","runtime_seconds":0.665450481,"progress":"41.4KB/41.4KB"},{"desc":"uploading media/images/test_samples_2_4a40d9745fc1756b1ce6.png","runtime_seconds":0.665412261,"progress":"58.7KB/58.7KB"},{"desc":"uploading media/images/test_samples_2_959d54e1f2ab96741f11.png","runtime_seconds":0.665407411,"progress":"70.6KB/70.6KB"},{"desc":"uploading media/images/test_samples_2_9033d260058d5f69d1eb.png","runtime_seconds":0.665387721,"progress":"68.1KB/68.1KB"},{"desc":"uploading media/images/test_samples_2_f4c43f85c8fb1589e42f.png","runtime_seconds":0.665365551,"progress":"62.0KB/62.0KB"},{"desc":"uploading media/images/test_samples_2_5d9fae197b234e94fe1e.png","runtime_seconds":0.665362311,"progress":"71.5KB/71.5KB"},{"desc":"uploading media/images/test_samples_2_d68dbaa9b718ab7fe064.png","runtime_seconds":0.665358611,"progress":"57.4KB/57.4KB"},{"desc":"uploading media/images/test_samples_2_ce17a015d38e38199560.png","runtime_seconds":0.66530769,"progress":"63.1KB/63.1KB"},{"desc":"uploading media/images/test_samples_2_b96622bf3b1afe5ddd09.png","runtime_seconds":0.6653016,"progress":"31.7KB/31.7KB"}],"total_operations":24}}
+{"time":"2026-02-21T10:23:59.157406626Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-02-21T10:24:00.577343528Z","level":"INFO","msg":"stream: closing","id":"p26h6vze"}
+{"time":"2026-02-21T10:24:00.577369729Z","level":"INFO","msg":"handler: closed","stream_id":"p26h6vze"}
+{"time":"2026-02-21T10:24:00.577384009Z","level":"INFO","msg":"writer: Close: closed","stream_id":"p26h6vze"}
+{"time":"2026-02-21T10:24:00.577400739Z","level":"INFO","msg":"sender: closed","stream_id":"p26h6vze"}
+{"time":"2026-02-21T10:24:00.57752814Z","level":"INFO","msg":"stream: closed","id":"p26h6vze"}

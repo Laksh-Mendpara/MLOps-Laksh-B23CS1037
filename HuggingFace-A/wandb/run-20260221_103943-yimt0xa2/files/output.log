@@ -1,0 +1,21 @@
+Loading dataset from HuggingFace...
+Generating train split: 100%|██████████| 5000/5000 [00:00<00:00, 15667.67 examples/s]
+Generating validation split: 100%|██████████| 500/500 [00:00<00:00, 30867.25 examples/s]
+Generating test split: 100%|██████████| 1000/1000 [00:00<00:00, 15982.08 examples/s]
+Dataset splits: ['train', 'validation', 'test']
+split keys - ['train', 'validation', 'test']
+Train: 5000 | Val: 500 | Test: 1000
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet18_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet18_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Downloading: "https://download.pytorch.org/models/resnet18-f37072fd.pth" to /root/.cache/torch/hub/checkpoints/resnet18-f37072fd.pth
+100%|██████████| 44.7M/44.7M [00:00<00:00, 52.0MB/s]
+Epoch [1/1] Train Loss: 0.4987 | Train Acc: 84.88% | Val Loss: 0.2389 | Val Acc: 92.20%
+  → Best model saved (Val Acc: 92.20%)
+
+Training complete! Best Val Acc: 92.20%
+
+Pushing best model to HuggingFace Hub...
+best_model.pth: 100%|██████████| 44.8M/44.8M [00:06<00:00, 7.18MB/s]  
+Model pushed to https://huggingface.co/Laksh-Mendpara/minorexam

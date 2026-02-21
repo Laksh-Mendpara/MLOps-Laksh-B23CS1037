@@ -1,0 +1,24 @@
+Loading dataset from HuggingFace...
+README.md: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 723/723 [00:00<00:00, 2.75MB/s]
+train-00000-of-00001.parquet: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████| 88.9M/88.9M [00:01<00:00, 77.9MB/s]
+validation-00000-of-00001.parquet: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 8.82M/8.82M [00:00<00:00, 72.8MB/s]
+test-00000-of-00001.parquet: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████| 17.8M/17.8M [00:00<00:00, 86.1MB/s]
+Generating train split: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████| 5000/5000 [00:00<00:00, 16359.33 examples/s]
+Generating validation split: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████| 500/500 [00:00<00:00, 30404.52 examples/s]
+Generating test split: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████| 1000/1000 [00:00<00:00, 20798.06 examples/s]
+Dataset splits: ['train', 'validation', 'test']
+split keys - ['train', 'validation', 'test']
+Train: 5000 | Val: 500 | Test: 1000
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet18_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet18_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Downloading: "https://download.pytorch.org/models/resnet18-f37072fd.pth" to /root/.cache/torch/hub/checkpoints/resnet18-f37072fd.pth
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 44.7M/44.7M [00:00<00:00, 92.1MB/s]
+Epoch [1/1] Train Loss: 0.4832 | Train Acc: 86.04% | Val Loss: 0.2576 | Val Acc: 89.80%
+  → Best model saved (Val Acc: 89.80%)
+
+Training complete! Best Val Acc: 89.80%
+
+HF_TOKEN not set – skipping HuggingFace Hub push.
+Best model saved locally at: best_model.pth
