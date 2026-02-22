@@ -15,13 +15,17 @@ import os
 import json
 import argparse
 import logging
+from datetime import datetime
 
 import torch
 from transformers import (
-    DistilBertTokenizerFast,
-    DistilBertForSequenceClassification,
+    AutoTokenizer,
+    AutoModelForSequenceClassification,
     Trainer,
     TrainingArguments,
+    TrainerCallback,
+    TrainerState,
+    TrainerControl,
 )
 
 from data import load_all_genres, make_train_test_split
@@ -30,17 +34,46 @@ from huggingface_hub import HfApi, login
 from dotenv import load_dotenv
 load_dotenv()
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s  %(levelname)s  %(message)s',
-)
+# Console handler (always active)
+_console_handler = logging.StreamHandler()
+_console_handler.setFormatter(logging.Formatter('%(asctime)s  %(levelname)s  %(message)s'))
+logging.basicConfig(level=logging.INFO, handlers=[_console_handler])
 logger = logging.getLogger(__name__)
+
+
+def _add_file_logger(log_dir: str) -> None:
+    """Add a plain-text FileHandler to the root logger."""
+    os.makedirs(log_dir, exist_ok=True)
+    log_path = os.path.join(log_dir, 'train.log')
+    fh = logging.FileHandler(log_path, mode='a', encoding='utf-8')
+    fh.setFormatter(logging.Formatter('%(asctime)s  %(levelname)s  %(message)s'))
+    fh.setLevel(logging.INFO)
+    logging.getLogger().addHandler(fh)
+    logger.info("Plain-text log → %s", log_path)
+
+
+class PlainTextLogCallback(TrainerCallback):
+    """Write Trainer step/epoch metrics to a plain text file."""
+
+    def __init__(self, log_path: str):
+        self.log_path = log_path
+        os.makedirs(os.path.dirname(log_path), exist_ok=True)
+        with open(log_path, 'a', encoding='utf-8') as f:
+            f.write(f"\n{'='*60}\nTraining started: {datetime.now().isoformat()}\n{'='*60}\n")
+
+    def on_log(self, args, state: TrainerState, control: TrainerControl, logs=None, **kwargs):
+        if logs is None:
+            return
+        line = f"[step {state.global_step:>5}]  " + "  ".join(f"{k}={v:.4f}" if isinstance(v, float) else f"{k}={v}" for k, v in sorted(logs.items()))
+        with open(self.log_path, 'a', encoding='utf-8') as f:
+            f.write(line + "\n")
+            f.flush()   # flush before the file closes
 
 # ---------------------------------------------------------------------------
 # Configuration defaults
 # ---------------------------------------------------------------------------
-MODEL_NAME = 'distilbert-base-cased'
-CACHED_MODEL_DIR = './distilbert-reviews-genres'
+MODEL_NAME = 'roberta-base'             # ~480 MB; ~75-78% acc; no extra deps
+CACHED_MODEL_DIR = './fine-tuned-genre-model'
 RESULTS_DIR = './results'
 LOGS_DIR = './logs'
 CACHE_FILE = './genre_reviews_dict.pickle'
@@ -49,13 +82,14 @@ REVIEWS_CACHE_PATH = CACHE_FILE
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Fine-tune DistilBERT for genre classification')
+    parser = argparse.ArgumentParser(description='Fine-tune a HuggingFace model for genre classification')
+    parser.add_argument('--model_name', type=str, default=MODEL_NAME, help='HF model id to fine-tune (any AutoModel-compatible)')
     parser.add_argument('--epochs', type=int, default=3, help='Number of training epochs')
     parser.add_argument('--batch_size', type=int, default=10, help='Train batch size per device')
     parser.add_argument('--eval_batch', type=int, default=16, help='Eval batch size per device')
-    parser.add_argument('--lr', type=float, default=5e-5, help='Learning rate')
+    parser.add_argument('--lr', type=float, default=2e-5, help='Learning rate (2e-5 recommended for DeBERTa)')
     parser.add_argument('--output_dir', type=str, default=CACHED_MODEL_DIR, help='Where to save the model')
-    parser.add_argument('--hf_repo', type=str, default='Laksh-Mendpara/MLOps-Assignment-3', help='HuggingFace Hub repo id (e.g. username/repo)')
+    parser.add_argument('--hf_repo', type=str, default='Laksh-Mendpara/MLOps-Assignment-3', help='HuggingFace Hub repo id')
     parser.add_argument('--sample_size', type=int, default=2000, help='Reviews to sample per genre')
     parser.add_argument('--per_genre', type=int, default=1000, help='Reviews per genre for train/test split')
     return parser.parse_args()
@@ -67,6 +101,9 @@ def main():
     os.makedirs(args.output_dir, exist_ok=True)
     os.makedirs(RESULTS_DIR, exist_ok=True)
     os.makedirs(LOGS_DIR, exist_ok=True)
+
+    # Attach plain-text file logger as early as possible
+    _add_file_logger(LOGS_DIR)
 
     # ------------------------------------------------------------------
     # 0. Setup
@@ -106,8 +143,8 @@ def main():
     # ------------------------------------------------------------------
     # 2. Tokenise
     # ------------------------------------------------------------------
-    logger.info("Tokenising …")
-    tokenizer = DistilBertTokenizerFast.from_pretrained(MODEL_NAME)
+    logger.info("Tokenising with model: %s …", args.model_name)
+    tokenizer = AutoTokenizer.from_pretrained(args.model_name)
 
     train_encodings = tokenizer(train_texts, truncation=True, padding=True, max_length=MAX_LENGTH)
     test_encodings  = tokenizer(test_texts,  truncation=True, padding=True, max_length=MAX_LENGTH)
@@ -134,11 +171,13 @@ def main():
     # ------------------------------------------------------------------
     # 4. Load pre-trained model
     # ------------------------------------------------------------------
-    model = DistilBertForSequenceClassification.from_pretrained(
-        MODEL_NAME,
+    logger.info("Loading pre-trained model: %s …", args.model_name)
+    model = AutoModelForSequenceClassification.from_pretrained(
+        args.model_name,
         num_labels=len(id2label),
         id2label=id2label,
         label2id=label2id,
+        ignore_mismatched_sizes=True,   # handles head replacement cleanly
     ).to(device)
 
     # ------------------------------------------------------------------
@@ -169,12 +208,14 @@ def main():
     # ------------------------------------------------------------------
     # 6. Trainer
     # ------------------------------------------------------------------
+    step_log_path = os.path.join(LOGS_DIR, 'train_steps.log')
     trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=test_dataset,
         compute_metrics=compute_metrics,
+        callbacks=[PlainTextLogCallback(step_log_path)]
     )
 
     logger.info("Starting training …")
@@ -204,9 +245,11 @@ def main():
     # ------------------------------------------------------------------
     if args.hf_repo:
         logger.info("Pushing model to HuggingFace Hub: %s …", args.hf_repo)
-        trainer.push_to_hub(args.hf_repo)
-        tokenizer.push_to_hub(args.hf_repo)
-        logger.info("Model pushed successfully.")
+        # trainer.push_to_hub(repo_id) is WRONG — its first positional arg is
+        # commit_message, not repo_id. Use model/tokenizer directly instead.
+        model.push_to_hub(args.hf_repo, commit_message="Fine-tuned DistilBERT for book genre classification")
+        tokenizer.push_to_hub(args.hf_repo, commit_message="Add tokenizer")
+        logger.info("Model and tokenizer pushed successfully to %s", args.hf_repo)
 
     logger.info("Done.")
 
