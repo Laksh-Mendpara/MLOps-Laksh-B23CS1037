@@ -1,0 +1,105 @@
+================================================================================
+  MLOps Assignment 3 — Docker Build & Run Instructions
+  Student : Laksh Mendpara  |  Roll No: B23CS1037
+================================================================================
+
+Two Docker images are provided:
+  1. Dockerfile        → Development / training image  (genre-train)
+  2. Dockerfile.eval   → Production evaluation image   (genre-eval)
+
+────────────────────────────────────────────────────────────────────────────────
+PREREQUISITES
+────────────────────────────────────────────────────────────────────────────────
+  - Docker ≥ 24 with NVIDIA container toolkit (for GPU support)
+  - NVIDIA driver installed on host
+  - A Hugging Face account with a write-access token (stored in HF_TOKEN)
+
+  Export your token before every docker run:
+      export HF_TOKEN=<your_huggingface_token>
+
+────────────────────────────────────────────────────────────────────────────────
+1. TRAINING IMAGE  (Dockerfile)
+────────────────────────────────────────────────────────────────────────────────
+
+Build:
+    docker build -t genre-train .
+
+Run (GPU, mount project directory so all outputs land on the host):
+    docker run --rm -it \
+        --gpus all --shm-size=8g \
+        --network=host \
+        -e HF_TOKEN=$HF_TOKEN \
+        -v $(pwd):/app \
+        genre-train
+
+Inside the container — train and push to Hub:
+    python src/train.py \
+        --epochs 3 \
+        --hf_repo Laksh-Mendpara/MLOps-Assignment-3
+
+Outputs written to the host at:
+    ./fine-tuned-genre-model/   — saved model weights + tokenizer
+    ./results/                  — train_eval_metrics.json
+    ./logs/train.log            — plain-text application log
+    ./logs/train_steps.log      — per-step training metrics
+
+Optional flags:
+    --model_name  microsoft/deberta-v3-small   (better accuracy; needs rebuild
+                                                so protobuf is installed first)
+    --epochs      N           (default 3; 3–4 recommended)
+    --lr          2e-5        (default)
+
+────────────────────────────────────────────────────────────────────────────────
+2. EVALUATION IMAGE  (Dockerfile.eval)
+────────────────────────────────────────────────────────────────────────────────
+This image pulls the model from HuggingFace Hub at runtime and auto-runs
+evaluation on container startup.  The model is NOT baked into the image.
+
+Build:
+    docker build -f Dockerfile.eval -t genre-eval .
+
+Run (results appear in ./results/ on the host):
+    docker run --rm \
+        --gpus all --shm-size=8g \
+        --network=host \
+        -e HF_TOKEN=$HF_TOKEN \
+        -e HF_REPO=Laksh-Mendpara/MLOps-Assignment-3 \
+        -v $(pwd)/results:/app/results \
+        genre-eval
+
+Outputs:
+    ./results/eval_hub.json                     — metrics JSON
+    ./results/confusion_matrix_hub.png          — confusion matrix
+    ./results/f1_per_class_hub.png              — per-class F1 bar chart
+    ./results/misclassification_heatmap_hub.png — error heatmap
+
+────────────────────────────────────────────────────────────────────────────────
+3. COMPARE LOCAL vs HUB (inside the training container)
+────────────────────────────────────────────────────────────────────────────────
+
+    python src/evaluate.py \
+        --mode both \
+        --model_path ./fine-tuned-genre-model \
+        --hf_repo    Laksh-Mendpara/MLOps-Assignment-3
+
+Adds:
+    ./results/comparison.json
+    ./results/accuracy_comparison.png
+
+────────────────────────────────────────────────────────────────────────────────
+4. QUICK REFERENCE
+────────────────────────────────────────────────────────────────────────────────
+
+  Command                              | Purpose
+  -------------------------------------|--------------------------------------
+  docker build -t genre-train .        | Build training image
+  docker build -f Dockerfile.eval ...  | Build production eval image
+  python src/train.py --epochs 3       | Fine-tune & push model
+  python src/evaluate.py --mode local  | Evaluate local checkpoint
+  python src/evaluate.py --mode hub    | Evaluate from HF Hub
+  python src/evaluate.py --mode both   | Compare local vs hub + plots
+
+GitHub Repository : https://github.com/Laksh-Mendpara/MLOps-Laksh-B23CS1037/tree/Assignment-3
+HuggingFace Model : https://huggingface.co/Laksh-Mendpara/MLOps-Assignment-3/tree/main
+
+================================================================================
