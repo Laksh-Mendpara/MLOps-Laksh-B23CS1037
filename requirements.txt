@@ -19,3 +19,5 @@ seaborn>=0.13.0
 
 # Utilities
 gdown>=5.1.0
+typing-extensions>=4.12.2
+python-dotenv>=1.0.0
