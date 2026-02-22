@@ -32,10 +32,13 @@ from transformers import (
     Trainer,
     TrainingArguments,
 )
+from huggingface_hub import HfApi, login
 from sklearn.metrics import classification_report, accuracy_score
 
 from data import load_all_genres, make_train_test_split
 from utils import MyDataset, compute_metrics
+from dotenv import load_dotenv
+load_dotenv()
 
 logging.basicConfig(
     level=logging.INFO,
@@ -161,6 +164,20 @@ def evaluate_model(
 def main():
     args = parse_args()
     os.makedirs(RESULTS_DIR, exist_ok=True)
+
+    HF_TOKEN = os.environ.get('HF_TOKEN')
+    if HF_TOKEN is None:
+        raise ValueError("Please set the HF_TOKEN environment variable")
+    else:
+        HF_TOKEN = HF_TOKEN.strip()
+
+    # Check validity
+    try:
+        login(HF_TOKEN)
+        _hf_username = HfApi().whoami()
+    except Exception as e:
+        raise ValueError("Invalid HF_TOKEN") from e
+    logger.info("Using HF user: %s", _hf_username)
 
     test_texts, test_labels, label2id, id2label = build_test_dataset(
         args.sample_size, args.per_genre
