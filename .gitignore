@@ -37,3 +37,7 @@ Thumbs.db
 # Environment variables / secrets
 .env
 *.pem
+
+# extras
+!logs
+results/
