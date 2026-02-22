@@ -1,0 +1,339 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{parskip}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue
+}
+
+\lstset{
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10},
+}
+
+\title{%
+    \textbf{MLOps Assignment 3}\\[6pt]
+    \large End-to-End Hugging Face Model Training \& Docker Deployment\\[4pt]
+    \normalsize Fine-Tuning a Transformer for Book-Genre Classification
+}
+\author{
+    Laksh Mendpara\\
+    Roll No: B23CS1037
+}
+\date{February 2026}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{Introduction}
+% ============================================================
+
+This report documents the end-to-end machine learning workflow for
+Assignment 3.  The goal is to fine-tune a pre-trained language model to
+classify book reviews into one of eight genres using the GoodReads dataset,
+containerise the entire pipeline with Docker, and publish the trained model to
+the Hugging Face Hub.
+
+\noindent\textbf{GitHub Repository:}
+\url{https://github.com/Laksh-Mendpara/MLOps-Laksh-B23CS1037/tree/Assignment-3}
+
+\noindent\textbf{Hugging Face Model:}
+\url{https://huggingface.co/Laksh-Mendpara/MLOps-Assignment-3}
+
+% ============================================================
+\section{Model Selection}
+% ============================================================
+
+\subsection{Chosen Model: \texttt{roberta-base}}
+
+After initial experimentation with \texttt{distilbert-base-cased}, a switch
+was made to \texttt{roberta-base} to improve classification accuracy.
+Table~\ref{tab:models} compares the candidate models.
+
+\begin{table}[h]
+\centering
+\caption{Candidate model comparison}
+\label{tab:models}
+\begin{tabular}{llccc}
+\toprule
+\textbf{Model} & \textbf{Params} & \textbf{Size} & \textbf{Approx.\ Acc.} & \textbf{Extra deps} \\
+\midrule
+distilbert-base-cased       & 66 M  & 260 MB & $\sim$60\%   & none         \\
+\textbf{roberta-base}       & 125 M & 480 MB & $\sim$62\%+  & none         \\
+microsoft/deberta-v3-small  & 140 M & 278 MB & $\sim$74\%   & protobuf     \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Rationale for \texttt{roberta-base}:}
+\begin{itemize}
+    \item RoBERTa was trained with a more robust regime (dynamic masking, no NSP,
+          larger batches) compared to original BERT.
+    \item It does not require additional system libraries (unlike DeBERTa-v3 which
+          needs \texttt{protobuf} for its SentencePiece tokenizer).
+    \item It is available out-of-the-box with \texttt{AutoTokenizer} and
+          \texttt{AutoModelForSequenceClassification}.
+    \item \texttt{microsoft/deberta-v3-small} is documented as the recommended
+          upgrade path once \texttt{protobuf} is added to the Docker image.
+\end{itemize}
+
+% ============================================================
+\section{Dataset}
+% ============================================================
+
+The dataset is drawn from the
+\href{https://mengtingwan.github.io/data/goodreads.html}{UCSD GoodReads} corpus.
+Reviews are streamed directly from eight per-genre gzip-compressed JSON files.
+
+\begin{table}[h]
+\centering
+\caption{Dataset statistics}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Genre}             & \textbf{Train} & \textbf{Test} \\
+\midrule
+children                   & 800 & 200 \\
+comics\_graphic            & 800 & 200 \\
+fantasy\_paranormal        & 800 & 200 \\
+history\_biography         & 800 & 200 \\
+mystery\_thriller\_crime   & 800 & 200 \\
+poetry                     & 800 & 200 \\
+romance                    & 800 & 200 \\
+young\_adult               & 800 & 200 \\
+\midrule
+\textbf{Total}             & \textbf{6\,400} & \textbf{1\,600} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Reviews are cached locally as a pickle file after the first download so that
+re-runs do not require a network connection.
+
+% ============================================================
+\section{Training Summary}
+% ============================================================
+
+Training was conducted with the Hugging Face \texttt{Trainer} API inside a
+Docker container with GPU acceleration (\texttt{--gpus all}).
+
+\begin{table}[h]
+\centering
+\caption{Hyperparameters}
+\begin{tabular}{ll}
+\toprule
+\textbf{Parameter}                & \textbf{Value} \\
+\midrule
+Base model                        & \texttt{roberta-base} \\
+Epochs                            & 3 \\
+Train batch size (per device)     & 10 \\
+Eval batch size (per device)      & 16 \\
+Learning rate                     & $2 \times 10^{-5}$ \\
+Warmup steps                      & 100 \\
+Weight decay                      & 0.01 \\
+Max sequence length               & 512 tokens \\
+Evaluation strategy               & Every 100 steps \\
+Best-model selection              & \texttt{load\_best\_model\_at\_end=True} \\
+Metric for best model             & \texttt{accuracy} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Training logs (per-step loss and accuracy) are written to
+\texttt{logs/train\_steps.log}.  A plain-text application log is maintained
+in \texttt{logs/train.log}.
+
+% ============================================================
+\section{Evaluation Results}
+% ============================================================
+
+\subsection{Overall Metrics}
+
+\begin{table}[h]
+\centering
+\caption{Evaluation metrics on the held-out test set (1\,600 samples)}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Metric}   & \textbf{Local checkpoint} & \textbf{HF Hub model} \\
+\midrule
+Accuracy          & 0.6169                    & 0.6169 (identical) \\
+Eval loss         & 1.1207                    & 1.1207 \\
+Macro F1          & 0.61                      & 0.61 \\
+Weighted F1       & 0.61                      & 0.61 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The local and Hub checkpoints produce identical metrics because they are the
+same saved weights; this confirms correct serialisation and upload.
+
+\subsection{Per-Class Performance}
+
+\begin{table}[h]
+\centering
+\caption{Per-class precision, recall, and F1}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Genre}             & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\midrule
+children                   & 0.61 & 0.78 & 0.68 \\
+comics\_graphic            & 0.88 & 0.70 & 0.78 \\
+fantasy\_paranormal        & 0.58 & 0.34 & 0.43 \\
+history\_biography         & 0.60 & 0.57 & 0.58 \\
+mystery\_thriller\_crime   & 0.52 & 0.60 & 0.56 \\
+poetry                     & 0.79 & 0.78 & 0.79 \\
+romance                    & 0.56 & 0.68 & 0.62 \\
+young\_adult               & 0.46 & 0.48 & 0.47 \\
+\midrule
+\textbf{Macro avg}         & 0.63 & 0.62 & 0.61 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Observations:}
+\begin{itemize}
+    \item \textit{comics\_graphic} and \textit{poetry} are the easiest classes
+          (F1 $\approx$ 0.79), likely because their vocabulary is strongly
+          genre-specific.
+    \item \textit{fantasy\_paranormal} and \textit{young\_adult} are the hardest
+          (F1 $\approx$ 0.43--0.47), plausibly because both genres share similar
+          tropes and narrative styles.
+    \item Confusion is highest between \textit{romance} and \textit{young\_adult},
+          and between \textit{fantasy\_paranormal} and \textit{young\_adult},
+          as shown in the misclassification heatmap.
+\end{itemize}
+
+\subsection{Confusion Matrix}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.85\textwidth]{results/confusion_matrix_local.png}
+    \caption{Confusion matrix — local checkpoint (counts)}
+    \label{fig:cm}
+\end{figure}
+
+\subsection{Per-Class F1 Bar Chart}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.80\textwidth]{results/f1_per_class_local.png}
+    \caption{Per-class F1 scores. Colour key: green $\geq$ 0.75, orange $\geq$ 0.60, red $<$ 0.60.}
+    \label{fig:f1}
+\end{figure}
+
+\subsection{Misclassification Heatmap}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.85\textwidth]{results/misclassification_heatmap_local.png}
+    \caption{Misclassification heatmap (diagonal zeroed) — highlights confused genre pairs}
+    \label{fig:mhm}
+\end{figure}
+
+% ============================================================
+\section{Docker Deployment}
+% ============================================================
+
+Two Docker images implement the pipeline:
+
+\begin{description}
+    \item[\texttt{genre-train} (\texttt{Dockerfile})]
+        Development image for interactive training.
+        The project directory is bind-mounted (\texttt{-v \$(pwd):/app}) so
+        all outputs (model, logs, results) persist on the host file system.
+
+    \item[\texttt{genre-eval} (\texttt{Dockerfile.eval})]
+        Minimal production image.  The model is \emph{not} baked in; it is
+        fetched from the Hugging Face Hub at runtime via the \texttt{HF\_REPO}
+        environment variable.  Evaluation runs automatically on container start.
+\end{description}
+
+\noindent Key design decisions:
+\begin{itemize}
+    \item \texttt{VOLUME} instructions were deliberately omitted — Docker's
+          anonymous volumes for declared paths override bind-mount subdirectories,
+          making output files invisible on the host.  Explicit \texttt{-v} flags
+          at \texttt{docker run} time are used instead.
+    \item \texttt{python:3.11-slim} base image keeps the image lean while
+          supporting all required pip packages.
+    \item \texttt{--network=host} enables direct Hugging Face Hub downloads
+          without NAT latency.
+\end{itemize}
+
+% ============================================================
+\section{Challenges \& Solutions}
+% ============================================================
+
+\begin{table}[h]
+\centering
+\begin{tabular}{p{5.5cm}p{9cm}}
+\toprule
+\textbf{Challenge} & \textbf{Solution} \\
+\midrule
+\texttt{VOLUME} in Dockerfile making log/result files invisible on host &
+    Removed \texttt{VOLUME} declarations; use bind-mount (\texttt{-v \$(pwd):/app}) instead. \\
+\addlinespace
+\texttt{trainer.push\_to\_hub(repo\_id)} silently treating the argument as a
+commit message $\rightarrow$ model not uploaded &
+    Changed to \texttt{model.push\_to\_hub(repo\_id)} and
+    \texttt{tokenizer.push\_to\_hub(repo\_id)} which correctly accept the repo id. \\
+\addlinespace
+\texttt{PlainTextLogCallback.on\_log()} raising \texttt{ValueError: I/O operation on closed file} &
+    \texttt{f.flush()} was outside the \texttt{with open()} block.  Moved inside. \\
+\addlinespace
+\texttt{microsoft/deberta-v3-small} failing with \texttt{ImportError: protobuf not found} &
+    Added \texttt{protobuf>=4.25.0} to \texttt{requirements.txt}; switched default
+    to \texttt{roberta-base} (no extra deps) until the image is rebuilt. \\
+\addlinespace
+Large dataset download (8 $\times$ gzip HTTP streams, $\sim$500 MB) &
+    Added pickle cache (\texttt{genre\_reviews\_dict.pickle}) — data downloaded
+    only once; subsequent runs restore from disk in $<$1 s. \\
+\addlinespace
+Jupyter magic (\texttt{\%matplotlib inline}) present in notebook cells &
+    Removed in \texttt{.py} scripts; used \texttt{matplotlib.use('Agg')} for
+    headless (Docker-compatible) plot rendering. \\
+\bottomrule
+\end{tabular}
+\caption{Challenges encountered and their resolutions}
+\end{table}
+
+% ============================================================
+\section{Conclusion}
+% ============================================================
+
+A complete end-to-end MLOps pipeline was implemented:
+
+\begin{enumerate}
+    \item The GoodReads dataset was downloaded, cached, and split into
+          6\,400 training and 1\,600 test samples across 8 genres.
+    \item \texttt{roberta-base} was fine-tuned for 3 epochs using the
+          Hugging Face \texttt{Trainer} API, achieving \textbf{61.7\% accuracy}
+          (macro F1~=~0.61) on the test set.
+    \item The model was saved locally and pushed to the Hugging Face Hub.
+    \item Re-evaluation from the Hub confirmed identical metrics, validating
+          the serialisation pipeline.
+    \item Two Docker images encapsulate the full workflow: a training image
+          and a production evaluation image.
+\end{enumerate}
+
+Accuracy can be improved by: (a) training for more epochs (4--5),
+(b) switching to \texttt{microsoft/deberta-v3-small} once \texttt{protobuf}
+is available in the Docker image, or (c) increasing the per-genre review sample.
+
+\end{document}

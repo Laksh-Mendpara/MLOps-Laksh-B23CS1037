@@ -1,17 +1,26 @@
 # MLOps Assignment 3 – Fine-Tuning & Docker Deployment
 
-**Student:** Laksh Mendpara (B23CS1037)
+**Student:** Laksh Mendpara &nbsp;|&nbsp; **Roll No:** B23CS1037  
+**Branch:** `Assignment-3`
+
+---
+
+## Links
+
+| Resource | URL |
+|----------|-----|
+| GitHub | [MLOps-Laksh-B23CS1037 / Assignment-3](https://github.com/Laksh-Mendpara/MLOps-Laksh-B23CS1037/tree/Assignment-3) |
+| Hugging Face Model | [Laksh-Mendpara / MLOps-Assignment-3](https://huggingface.co/Laksh-Mendpara/MLOps-Assignment-3/tree/main) |
 
 ---
 
 ## Overview
 
-This repository implements an end-to-end ML workflow:
-
-1. **Fine-tune** `distilbert-base-cased` on GoodReads book-review data to classify text into **8 genres**.
-2. **Dockerize** both the training and production-evaluation pipelines.
-3. **Publish** the trained model to the Hugging Face Hub.
-4. **Re-evaluate** by pulling the model directly from the Hub to verify reproducibility.
+End-to-end MLOps pipeline:
+1. Fine-tune **`roberta-base`** on GoodReads book reviews → 8 genre classes  
+2. Dockerize training + production-evaluation pipelines  
+3. Publish model to Hugging Face Hub  
+4. Re-evaluate from Hub, generate plots & classification report  
 
 ---
 
@@ -19,87 +28,114 @@ This repository implements an end-to-end ML workflow:
 
 ```
 MLOps-Laksh-B23CS1037/
-├── ML_DL_Ops_Ass_3_Fine_Tuning_Classification.ipynb  # Original notebook (Task 1)
+├── ML_DL_Ops_Ass_3_Fine_Tuning_Classification.ipynb  ← original notebook
 ├── src/
-│   ├── data.py        # Data loading & train/test split (Task 3, 5)
-│   ├── utils.py       # MyDataset + compute_metrics (Task 3)
-│   ├── train.py       # Training script with Trainer API (Task 5)
-│   └── evaluate.py    # Local & Hub evaluation (Task 6, 8)
-├── Dockerfile         # Dev / training image (Task 2)
-├── Dockerfile.eval    # Production evaluation image (Task 9)
-├── entrypoint.sh      # Auto-runs evaluate.py on container start
-├── requirements.txt   # Python dependencies
-├── results/           # Saved evaluation JSON files (generated at runtime)
-├── SHORT_REPORT.md    # Model selection & summary report (Task 10)
-└── README.md          # This file
+│   ├── data.py        ← GoodReads download + train/test split
+│   ├── utils.py       ← MyDataset, compute_metrics
+│   ├── train.py       ← fine-tune & push to Hub
+│   └── evaluate.py    ← eval + plots (local / hub / both)
+├── Dockerfile             ← training image
+├── Dockerfile.eval        ← production evaluation image
+├── entrypoint.sh          ← auto-runs evaluate.py on container start
+├── requirements.txt
+├── DOCKER_INSTRUCTIONS.txt
+├── report.tex             ← LaTeX assignment report
+├── results/               ← eval JSON + PNG plots (generated at runtime)
+└── logs/                  ← train.log, train_steps.log, eval.log
 ```
 
 ---
 
-## Model
+## Evaluation Results (roberta-base, 3 epochs)
 
-| Item | Value |
-|------|-------|
-| Base model | `distilbert-base-cased` |
-| Task | Multi-class text classification (8 genres) |
-| Dataset | GoodReads by-genre reviews (UCSD) |
-| Hugging Face Hub | [laksh-B23CS1037/distilbert-book-genre](https://huggingface.co/laksh-B23CS1037/distilbert-book-genre) |
+| Metric | Value |
+|--------|-------|
+| **Accuracy** | **61.7%** |
+| Eval loss | 1.121 |
+| Macro F1 | 0.61 |
+
+### Per-Class F1
+
+![F1 per class](results/f1_per_class_local.png)
+
+### Confusion Matrix
+
+![Confusion Matrix](results/confusion_matrix_local.png)
+
+### Misclassification Heatmap
+
+![Misclassification Heatmap](results/misclassification_heatmap_local.png)
 
 ---
 
-## Quick Start
+## Quick Start (Local)
 
-### Training - Training Image (Task 2)
+```bash
+pip install -r requirements.txt
+
+# Train & push to Hub
+python src/train.py --epochs 3 --hf_repo Laksh-Mendpara/MLOps-Assignment-3
+
+# Evaluate local model
+python src/evaluate.py --mode local --model_path ./fine-tuned-genre-model
+
+# Evaluate from Hub
+python src/evaluate.py --mode hub --hf_repo Laksh-Mendpara/MLOps-Assignment-3
+
+# Compare both (generates accuracy_comparison.png)
+python src/evaluate.py --mode both \
+    --model_path ./fine-tuned-genre-model \
+    --hf_repo    Laksh-Mendpara/MLOps-Assignment-3
+```
+
+Logs → `logs/train.log`, `logs/train_steps.log`, `logs/eval.log`  
+Plots → `results/confusion_matrix_<tag>.png`, `results/f1_per_class_<tag>.png`, `results/misclassification_heatmap_<tag>.png`
+
+---
+
+## Docker – Training Image
 
 ```bash
 # Build
-docker build --network=host -t genre-train .
+docker build -t genre-train .
 
-# Run interactively (mount results for persistence)
+# Run (GPU, all outputs on host via bind-mount)
 docker run --rm -it \
     --gpus all --shm-size=8g \
     --network=host \
+    -e HF_TOKEN=$HF_TOKEN \
     -v $(pwd):/app \
     genre-train
 
-# Inside the container
-python src/train.py --epochs 5
+# Inside container
+python src/train.py --epochs 3 --hf_repo Laksh-Mendpara/MLOps-Assignment-3
 ```
 
 ---
 
-### 3. Docker – Production Evaluation Image (Task 9)
+## Docker – Production Evaluation Image (Task 9)
 
-This image pulls the model from the Hugging Face Hub at runtime and runs evaluation automatically.
+Pulls model from Hub at runtime; runs evaluation on startup.
 
 ```bash
 # Build
-docker build -f Dockerfile.eval --network=host -t genre-eval .
+docker build -f Dockerfile.eval -t genre-eval .
 
-# Run (model is fetched from HF Hub; results appear in ./results/)
+# Run
 docker run --rm \
-    -e HF_REPO=laksh-B23CS1037/distilbert-book-genre \
     --gpus all --shm-size=8g \
     --network=host \
-    -v $(pwd):/app \
+    -e HF_TOKEN=$HF_TOKEN \
+    -e HF_REPO=Laksh-Mendpara/MLOps-Assignment-3 \
+    -v $(pwd)/results:/app/results \
     genre-eval
 ```
 
----
-
-## Evaluation Results
-
-Results are written to `results/` as JSON files after training / evaluation runs.
-
-| Metric | Local model | From HF Hub |
-|--------|-------------|-------------|
-| Accuracy | _see `results/eval_local.json`_ | _see `results/eval_hub.json`_ |
-
-Both files should contain identical (or near-identical) metrics because the Hub model is the uploaded checkpoint of the local fine-tuned model.
+See [DOCKER_INSTRUCTIONS.txt](DOCKER_INSTRUCTIONS.txt) for full reference.
 
 ---
 
-## Links
+## Report
 
-- **Hugging Face Model:** https://huggingface.co/laksh-B23CS1037/distilbert-book-genre
-- **GitHub Repository:** https://github.com/Laksh-Mendpara/MLOps-Laksh-B23CS1037
+Full assignment report: [report.tex](report.tex)  
+Compile with: `pdflatex report.tex`

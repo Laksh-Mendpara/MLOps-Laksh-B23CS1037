@@ -1,0 +1,37 @@
+2026-02-22 18:24:18,928  INFO  HTTP Request: GET https://huggingface.co/api/whoami-v2 "HTTP/1.1 200 OK"
+Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+2026-02-22 18:24:18,930  WARNING  Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+2026-02-22 18:24:19,161  INFO  HTTP Request: GET https://huggingface.co/api/whoami-v2 "HTTP/1.1 200 OK"
+2026-02-22 18:24:19,161  INFO  Using HF user: Laksh-Mendpara
+2026-02-22 18:24:19,161  INFO  Loading review data …
+Loading cached reviews from ./genre_reviews_dict.pickle …
+2026-02-22 18:24:19,190  INFO  [local] Loading tokenizer and model from: ./fine-tuned-genre-model
+Loading weights: 100%|████████████████████████████████████████████████████████████████████████████| 201/201 [00:00<00:00, 2364.37it/s, Materializing param=roberta.encoder.layer.11.output.dense.weight]
+2026-02-22 18:24:20,038  INFO  [local] Running evaluation …
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 100/100 [00:13<00:00,  7.59it/s]
+2026-02-22 18:24:33,957  INFO  [local] Eval metrics: {'eval_loss': 1.1206536293029785, 'eval_model_preparation_time': 0.0024, 'eval_accuracy': 0.616875, 'eval_runtime': 13.9166, 'eval_samples_per_second': 114.97, 'eval_steps_per_second': 7.186}
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 100/100 [00:13<00:00,  7.52it/s]
+
+============================================================
+Classification Report — local
+============================================================
+                        precision    recall  f1-score   support
+
+              children       0.61      0.78      0.68       200
+        comics_graphic       0.88      0.70      0.78       200
+    fantasy_paranormal       0.58      0.34      0.43       200
+     history_biography       0.60      0.57      0.58       200
+mystery_thriller_crime       0.52      0.60      0.56       200
+                poetry       0.79      0.78      0.79       200
+               romance       0.56      0.68      0.62       200
+           young_adult       0.46      0.48      0.47       200
+
+              accuracy                           0.62      1600
+             macro avg       0.63      0.62      0.61      1600
+          weighted avg       0.63      0.62      0.61      1600
+
+2026-02-22 18:24:47,413  INFO  [local] Metrics saved to ./results/eval_local.json
+2026-02-22 18:24:47,665  INFO  [local] Saved ./results/confusion_matrix_local.png
+2026-02-22 18:24:47,796  INFO  [local] Saved ./results/f1_per_class_local.png
+2026-02-22 18:24:48,017  INFO  [local] Saved ./results/misclassification_heatmap_local.png
+2026-02-22 18:24:48,055  INFO  Evaluation complete. Plots saved to ./results/

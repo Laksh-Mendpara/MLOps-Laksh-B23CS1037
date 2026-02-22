@@ -265,11 +265,23 @@ def evaluate_model(
     pred_ids = pred_output.predictions.argmax(-1).flatten().tolist()
     predicted_labels = [id2label[i] for i in pred_ids]
 
-    # Classification report (console)
-    print(f"\n{'='*60}")
-    print(f"Classification Report — {tag}")
-    print('='*60)
-    print(classification_report(test_labels, predicted_labels))
+    # Classification report — console + eval log
+    report_str = classification_report(test_labels, predicted_labels)
+    header = f"\n{'='*60}\nClassification Report — {tag}\n{'='*60}\n"
+    print(header + report_str)
+
+    # Write to logs/eval.log
+    eval_log_dir = './logs'
+    os.makedirs(eval_log_dir, exist_ok=True)
+    eval_log_path = os.path.join(eval_log_dir, 'eval.log')
+    with open(eval_log_path, 'a', encoding='utf-8') as lf:
+        from datetime import datetime
+        lf.write(f"\n{'='*60}\n")
+        lf.write(f"Evaluation run: {datetime.now().isoformat()}  |  tag={tag}  |  source={model_source}\n")
+        lf.write(f"Accuracy: {accuracy_score(test_labels, predicted_labels):.4f}\n")
+        lf.write(f"Eval metrics: {eval_metrics}\n")
+        lf.write(header + report_str)
+    logger.info("[%s] Classification report appended to %s", tag, eval_log_path)
 
     acc = accuracy_score(test_labels, predicted_labels)
     metrics = {
