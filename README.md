@@ -49,48 +49,21 @@ MLOps-Laksh-B23CS1037/
 
 ## Quick Start
 
-### 1. Local Setup
-
-```bash
-pip install -r requirements.txt
-
-# Training (downloads data, fine-tunes, saves model locally)
-python src/train.py --epochs 3 --output_dir ./distilbert-reviews-genres
-
-# Optional: push to HF Hub at the end of training
-python src/train.py --epochs 3 \
-    --output_dir ./distilbert-reviews-genres \
-    --hf_repo laksh-B23CS1037/distilbert-book-genre
-
-# Evaluate local model
-python src/evaluate.py --mode local --model_path ./distilbert-reviews-genres
-
-# Evaluate from HF Hub
-python src/evaluate.py --mode hub \
-    --hf_repo laksh-B23CS1037/distilbert-book-genre
-
-# Compare both
-python src/evaluate.py --mode both \
-    --model_path ./distilbert-reviews-genres \
-    --hf_repo    laksh-B23CS1037/distilbert-book-genre
-```
-
----
-
-### 2. Docker – Training Image (Task 2)
+### Training - Training Image (Task 2)
 
 ```bash
 # Build
-docker build -t genre-train .
+docker build --network=host -t genre-train .
 
 # Run interactively (mount results for persistence)
 docker run --rm -it \
-    -v $(pwd)/results:/app/results \
-    -v $(pwd)/distilbert-reviews-genres:/app/distilbert-reviews-genres \
+    --gpus all --shm-size=8g \
+    --network=host \
+    -v $(pwd):/app \
     genre-train
 
 # Inside the container
-python src/train.py --epochs 3
+python src/train.py --epochs 5
 ```
 
 ---
@@ -101,12 +74,14 @@ This image pulls the model from the Hugging Face Hub at runtime and runs evaluat
 
 ```bash
 # Build
-docker build -f Dockerfile.eval -t genre-eval .
+docker build -f Dockerfile.eval --network=host -t genre-eval .
 
 # Run (model is fetched from HF Hub; results appear in ./results/)
 docker run --rm \
     -e HF_REPO=laksh-B23CS1037/distilbert-book-genre \
-    -v $(pwd)/results:/app/results \
+    --gpus all --shm-size=8g \
+    --network=host \
+    -v $(pwd):/app \
     genre-eval
 ```
 
