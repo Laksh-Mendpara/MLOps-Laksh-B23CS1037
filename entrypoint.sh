@@ -4,7 +4,7 @@
 
 set -e
 
-HF_REPO="${HF_REPO:-laksh-B23CS1037/distilbert-book-genre}"
+HF_REPO="${HF_REPO:-Laksh-Mendpara/MLOps-Assignment-3}"
 
 echo "======================================================"
 echo "  Evaluating model from HuggingFace Hub: ${HF_REPO}"
