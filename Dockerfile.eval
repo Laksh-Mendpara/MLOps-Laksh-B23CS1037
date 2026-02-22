@@ -12,6 +12,8 @@
 #       -e HF_REPO=laksh-B23CS1037/distilbert-book-genre \
 #       -v $(pwd)/results:/app/results \
 #       genre-eval
+#
+# Note: use an explicit -v bind-mount (not VOLUME) so results are visible on the host.
 # -----------------------------------------------------------------------
 
 FROM python:3.11-slim
@@ -29,8 +31,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Entrypoint script that runs evaluation automatically
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-
-# Persist evaluation results
-VOLUME ["/app/results"]
 
 ENTRYPOINT ["/entrypoint.sh"]
