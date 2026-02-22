@@ -40,4 +40,4 @@ Thumbs.db
 
 # extras
 !logs
-results/
+fine-tuned-genre-model
