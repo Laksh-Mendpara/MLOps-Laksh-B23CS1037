@@ -9,6 +9,7 @@ import random
 import pickle
 import requests
 import os
+from typing_extensions import Literal
 
 # ---------------------------------------------------------------------------
 # Dataset URLs (GoodReads reviews by genre)
@@ -16,24 +17,28 @@ import os
 # ---------------------------------------------------------------------------
 
 GENRE_URL_DICT = {
-    'poetry':                 'https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/byGenre/goodreads_reviews_poetry.json.gz',
-    'children':               'https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/byGenre/goodreads_reviews_children.json.gz',
-    'comics_graphic':         'https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/byGenre/goodreads_reviews_comics_graphic.json.gz',
-    'fantasy_paranormal':     'https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/byGenre/goodreads_reviews_fantasy_paranormal.json.gz',
-    'history_biography':      'https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/byGenre/goodreads_reviews_history_biography.json.gz',
+    'poetry': 'https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/byGenre/goodreads_reviews_poetry.json.gz',
+    'children': 'https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/byGenre/goodreads_reviews_children.json.gz',
+    'comics_graphic': 'https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/byGenre/goodreads_reviews_comics_graphic.json.gz',
+    'fantasy_paranormal': 'https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/byGenre/goodreads_reviews_fantasy_paranormal.json.gz',
+    'history_biography': 'https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/byGenre/goodreads_reviews_history_biography.json.gz',
     'mystery_thriller_crime': 'https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/byGenre/goodreads_reviews_mystery_thriller_crime.json.gz',
-    'romance':                'https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/byGenre/goodreads_reviews_romance.json.gz',
-    'young_adult':            'https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/byGenre/goodreads_reviews_young_adult.json.gz',
+    'romance': 'https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/byGenre/goodreads_reviews_romance.json.gz',
+    'young_adult': 'https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/byGenre/goodreads_reviews_young_adult.json.gz',
 }
 
 
-def load_reviews(url, head=10000, sample_size=2000):
+def load_reviews(
+    url: str,
+    head: int = 10000,
+    sample_size: int = 2000
+) -> list[str]:
     """
     Stream reviews from a remote gzipped JSON file, returning a random sample.
 
     Args:
-        url:         URL to the .json.gz file.
-        head:        Maximum number of lines to read from the file.
+        url: URL to the .json.gz file.
+        head: Maximum number of lines to read from the file.
         sample_size: Number of reviews to randomly sample from the read lines.
 
     Returns:
@@ -57,22 +62,22 @@ def load_reviews(url, head=10000, sample_size=2000):
 
 
 def load_all_genres(
-    genre_url_dict=None,
-    head=10000,
-    sample_size=2000,
-    cache_path='genre_reviews_dict.pickle',
-):
+    genre_url_dict: dict[Literal[GENRE_URL_DICT.keys()], str] | None = None,
+    head: int = 10000,
+    sample_size: int = 2000,
+    cache_path: str = 'genre_reviews_dict.pickle',
+) -> dict[str, list[str]]:
     """
     Load (or restore from cache) reviews for every genre.
 
     Args:
         genre_url_dict: Mapping of genre name -> URL. Uses GENRE_URL_DICT by default.
-        head:           Max lines to read per genre file.
-        sample_size:    Reviews to sample per genre.
-        cache_path:     Path where the result is cached (pickle).
+        head: Max lines to read per genre file.
+        sample_size: Reviews to sample per genre.
+        cache_path: Path where the result is cached (pickle).
 
     Returns:
-        dict  {genre_name: [review_text, …]}
+        dict {genre_name: [review_text, …]}
     """
     if genre_url_dict is None:
         genre_url_dict = GENRE_URL_DICT
@@ -94,15 +99,20 @@ def load_all_genres(
     return genre_reviews_dict
 
 
-def make_train_test_split(genre_reviews_dict, per_genre=1000, train_ratio=0.8, seed=42):
+def make_train_test_split(
+    genre_reviews_dict: dict[str, list[str]],
+    per_genre: int = 1000,
+    train_ratio: float = 0.8,
+    seed: int = 42
+) -> tuple[list[str], list[str], list[str], list[str]]:
     """
     Build train/test splits from the per-genre review dict.
 
     Args:
         genre_reviews_dict: {genre: [review_text, …]}
-        per_genre:          Number of reviews to use per genre (sampled).
-        train_ratio:        Fraction of reviews used for training.
-        seed:               Random seed for reproducibility.
+        per_genre: Number of reviews to use per genre (sampled).
+        train_ratio: Fraction of reviews used for training.
+        seed: Random seed for reproducibility.
 
     Returns:
         Tuple (train_texts, train_labels, test_texts, test_labels)
@@ -115,7 +125,10 @@ def make_train_test_split(genre_reviews_dict, per_genre=1000, train_ratio=0.8, s
     n_train = int(per_genre * train_ratio)
 
     for genre, reviews in genre_reviews_dict.items():
-        reviews = random.sample(reviews, min(per_genre, len(reviews)))
+        reviews = random.sample(
+            reviews,
+            min(per_genre, len(reviews))
+        )
         for r in reviews[:n_train]:
             train_texts.append(r)
             train_labels.append(genre)

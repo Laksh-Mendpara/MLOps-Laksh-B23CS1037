@@ -26,6 +26,9 @@ from transformers import (
 
 from data import load_all_genres, make_train_test_split
 from utils import MyDataset, compute_metrics
+from huggingface_hub import HfApi, login
+from dotenv import load_dotenv
+load_dotenv()
 
 logging.basicConfig(
     level=logging.INFO,
@@ -36,25 +39,25 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Configuration defaults
 # ---------------------------------------------------------------------------
-MODEL_NAME               = 'distilbert-base-cased'
-CACHED_MODEL_DIR         = './distilbert-reviews-genres'
-RESULTS_DIR              = './results'
-LOGS_DIR                 = './logs'
-CACHE_FILE               = './genre_reviews_dict.pickle'
-MAX_LENGTH               = 512
-REVIEWS_CACHE_PATH       = CACHE_FILE
+MODEL_NAME = 'distilbert-base-cased'
+CACHED_MODEL_DIR = './distilbert-reviews-genres'
+RESULTS_DIR = './results'
+LOGS_DIR = './logs'
+CACHE_FILE = './genre_reviews_dict.pickle'
+MAX_LENGTH = 512
+REVIEWS_CACHE_PATH = CACHE_FILE
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Fine-tune DistilBERT for genre classification')
-    parser.add_argument('--epochs',       type=int,   default=3,           help='Number of training epochs')
-    parser.add_argument('--batch_size',   type=int,   default=10,          help='Train batch size per device')
-    parser.add_argument('--eval_batch',   type=int,   default=16,          help='Eval batch size per device')
-    parser.add_argument('--lr',           type=float, default=5e-5,        help='Learning rate')
-    parser.add_argument('--output_dir',   type=str,   default=CACHED_MODEL_DIR, help='Where to save the model')
-    parser.add_argument('--hf_repo',      type=str,   default=None,        help='HuggingFace Hub repo id (e.g. username/repo)')
-    parser.add_argument('--sample_size',  type=int,   default=2000,        help='Reviews to sample per genre')
-    parser.add_argument('--per_genre',    type=int,   default=1000,        help='Reviews per genre for train/test split')
+    parser.add_argument('--epochs', type=int, default=3, help='Number of training epochs')
+    parser.add_argument('--batch_size', type=int, default=10, help='Train batch size per device')
+    parser.add_argument('--eval_batch', type=int, default=16, help='Eval batch size per device')
+    parser.add_argument('--lr', type=float, default=5e-5, help='Learning rate')
+    parser.add_argument('--output_dir', type=str, default=CACHED_MODEL_DIR, help='Where to save the model')
+    parser.add_argument('--hf_repo', type=str, default='Laksh-Mendpara/MLOps-Assignment-3', help='HuggingFace Hub repo id (e.g. username/repo)')
+    parser.add_argument('--sample_size', type=int, default=2000, help='Reviews to sample per genre')
+    parser.add_argument('--per_genre', type=int, default=1000, help='Reviews per genre for train/test split')
     return parser.parse_args()
 
 
@@ -62,8 +65,28 @@ def main():
     args = parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
-    os.makedirs(RESULTS_DIR,     exist_ok=True)
-    os.makedirs(LOGS_DIR,        exist_ok=True)
+    os.makedirs(RESULTS_DIR, exist_ok=True)
+    os.makedirs(LOGS_DIR, exist_ok=True)
+
+    # ------------------------------------------------------------------
+    # 0. Setup
+    # ------------------------------------------------------------------
+    logger.info("Setting up environment …")
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    logger.info("Using device: %s", device)
+    HF_TOKEN = os.environ.get('HF_TOKEN')
+    if HF_TOKEN is None:
+        raise ValueError("Please set the HF_TOKEN environment variable")
+    else:
+        HF_TOKEN = HF_TOKEN.strip()
+
+    # Check validity
+    try:
+        login(HF_TOKEN)
+        _hf_username = HfApi().whoami()
+    except Exception as e:
+        raise ValueError("Invalid HF_TOKEN") from e
+    logger.info("Using HF user: %s", _hf_username)
 
     # ------------------------------------------------------------------
     # 1. Load data
@@ -94,13 +117,13 @@ def main():
     # ------------------------------------------------------------------
     unique_labels = sorted(set(train_labels))
     label2id = {label: idx for idx, label in enumerate(unique_labels)}
-    id2label  = {idx: label for label, idx in label2id.items()}
+    id2label = {idx: label for label, idx in label2id.items()}
 
     train_labels_encoded = [label2id[y] for y in train_labels]
-    test_labels_encoded  = [label2id[y] for y in test_labels]
+    test_labels_encoded = [label2id[y] for y in test_labels]
 
     train_dataset = MyDataset(train_encodings, train_labels_encoded)
-    test_dataset  = MyDataset(test_encodings,  test_labels_encoded)
+    test_dataset = MyDataset(test_encodings, test_labels_encoded)
 
     # Save label mappings alongside the model
     label_map_path = os.path.join(args.output_dir, 'label_map.json')
@@ -111,9 +134,6 @@ def main():
     # ------------------------------------------------------------------
     # 4. Load pre-trained model
     # ------------------------------------------------------------------
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    logger.info("Using device: %s", device)
-
     model = DistilBertForSequenceClassification.from_pretrained(
         MODEL_NAME,
         num_labels=len(id2label),

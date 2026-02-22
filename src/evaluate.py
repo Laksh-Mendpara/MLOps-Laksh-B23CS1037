@@ -3,8 +3,8 @@ evaluate.py  –  Evaluate a fine-tuned DistilBERT genre-classification model.
 
 Modes
 -----
-  local    Load the model from a local directory (default).
-  hub      Load the model from a Hugging Face Hub repository.
+  local Load the model from a local directory (default).
+  hub Load the model from a Hugging Face Hub repository.
 
 Usage examples
 --------------
@@ -12,12 +12,12 @@ Usage examples
   python src/evaluate.py --mode local --model_path ./distilbert-reviews-genres
 
   # Evaluate model from Hugging Face Hub
-  python src/evaluate.py --mode hub --hf_repo laksh-B23CS1037/distilbert-book-genre
+  python src/evaluate.py --mode hub --hf_repo <HF_REPO>
 
   # Compare both
   python src/evaluate.py --mode both \
       --model_path ./distilbert-reviews-genres \
-      --hf_repo    laksh-B23CS1037/distilbert-book-genre
+      --hf_repo <HF_REPO>
 """
 
 import os
@@ -43,27 +43,30 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-RESULTS_DIR         = './results'
+RESULTS_DIR = './results'
 REVIEWS_CACHE_PATH  = './genre_reviews_dict.pickle'
-MAX_LENGTH          = 512
+MAX_LENGTH = 512
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Evaluate fine-tuned DistilBERT')
-    parser.add_argument('--mode',       choices=['local', 'hub', 'both'], default='local',
+    parser.add_argument('--mode', choices=['local', 'hub', 'both'], default='local',
                         help='Where to load the model from')
     parser.add_argument('--model_path', default='./distilbert-reviews-genres',
                         help='Path to local fine-tuned model directory')
-    parser.add_argument('--hf_repo',    default=None,
+    parser.add_argument('--hf_repo', default="Laksh-Mendpara/MLOps-Assignment-3",
                         help='HuggingFace Hub repo id (e.g. username/repo)')
     parser.add_argument('--sample_size', type=int, default=2000,
                         help='Reviews to sample per genre (for data loading)')
-    parser.add_argument('--per_genre',   type=int, default=1000,
+    parser.add_argument('--per_genre', type=int, default=1000,
                         help='Reviews per genre for the evaluation split')
     return parser.parse_args()
 
 
-def build_test_dataset(sample_size, per_genre):
+def build_test_dataset(
+    sample_size: int,
+    per_genre: int
+) -> tuple[list[str], list[int], dict[str, int], dict[int, str]]:
     """Load data, tokenize, and return (test_dataset, test_labels, id2label)."""
     logger.info("Loading review data …")
     genre_reviews_dict = load_all_genres(
@@ -83,7 +86,14 @@ def build_test_dataset(sample_size, per_genre):
     return test_texts, test_labels, label2id, id2label
 
 
-def evaluate_model(model_source, test_texts, test_labels, label2id, id2label, tag='model'):
+def evaluate_model(
+    model_source: str,
+    test_texts: list[str],
+    test_labels: list[int],
+    label2id: dict[str, int],
+    id2label: dict[int, str],
+    tag: str = 'model'
+) -> dict[str, float]:
     """
     Load *model_source* (local path or HF Hub repo id), run evaluation,
     print classification report, and save metrics JSON.
@@ -92,15 +102,15 @@ def evaluate_model(model_source, test_texts, test_labels, label2id, id2label, ta
     """
     logger.info("[%s] Loading tokenizer and model from: %s", tag, model_source)
     tokenizer = DistilBertTokenizerFast.from_pretrained(model_source)
-    device    = 'cuda' if torch.cuda.is_available() else 'cpu'
-    model     = DistilBertForSequenceClassification.from_pretrained(model_source).to(device)
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    model = DistilBertForSequenceClassification.from_pretrained(model_source).to(device)
 
     # Tokenise test set
     test_encodings = tokenizer(
         test_texts, truncation=True, padding=True, max_length=MAX_LENGTH
     )
     test_labels_encoded = [label2id[y] for y in test_labels]
-    test_dataset        = MyDataset(test_encodings, test_labels_encoded)
+    test_dataset = MyDataset(test_encodings, test_labels_encoded)
 
     # Build a minimal Trainer just for prediction
     eval_args = TrainingArguments(
@@ -121,8 +131,8 @@ def evaluate_model(model_source, test_texts, test_labels, label2id, id2label, ta
     logger.info("[%s] Eval metrics: %s", tag, eval_metrics)
 
     # Detailed prediction
-    pred_output    = trainer.predict(test_dataset)
-    pred_ids       = pred_output.predictions.argmax(-1).flatten().tolist()
+    pred_output = trainer.predict(test_dataset)
+    pred_ids = pred_output.predictions.argmax(-1).flatten().tolist()
     predicted_labels = [id2label[i] for i in pred_ids]
 
     report = classification_report(test_labels, predicted_labels)
@@ -134,7 +144,7 @@ def evaluate_model(model_source, test_texts, test_labels, label2id, id2label, ta
     acc = accuracy_score(test_labels, predicted_labels)
     metrics = {
         'source': model_source,
-        'tag':    tag,
+        'tag': tag,
         'accuracy': acc,
         **{k: v for k, v in eval_metrics.items()},
     }
@@ -181,7 +191,7 @@ def main():
     # ------------------------------------------------------------------
     if args.mode == 'both' and len(results) == 2:
         local_acc = results['local']['accuracy']
-        hub_acc   = results['hub']['accuracy']
+        hub_acc = results['hub']['accuracy']
         print("\n" + "="*60)
         print("Comparison: Local vs. HuggingFace Hub model")
         print("="*60)
