@@ -20,8 +20,5 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose results directory as a volume so outputs persist on the host
-VOLUME ["/app/results", "/app/logs", "/app/distilbert-reviews-genres"]
-
 # Default: start an interactive shell so the user can run train / evaluate
 CMD ["/bin/bash"]
