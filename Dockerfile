@@ -20,10 +20,6 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy source code and notebook
-COPY src/ ./src/
-COPY ML_DL_Ops_Ass_3_Fine_Tuning_Classification.ipynb .
-
 # Expose results directory as a volume so outputs persist on the host
 VOLUME ["/app/results", "/app/logs", "/app/distilbert-reviews-genres"]
 
