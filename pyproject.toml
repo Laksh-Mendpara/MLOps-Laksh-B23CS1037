@@ -6,20 +6,30 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "adversarial-robustness-toolbox>=1.20.1",
-    "datasets>=4.8.4",
-    "huggingface-hub>=1.9.0",
+    "datasets==2.19.2",
+    "huggingface-hub==0.23.5",
     "matplotlib>=3.10.8",
-    "numpy>=2.2.6",
+    "numpy<2",
     "optuna>=4.8.0",
-    "peft>=0.18.1",
+    "peft==0.10.0",
     "pillow>=12.2.0",
     "python-dotenv>=1.2.2",
     "scikit-learn>=1.7.2",
-    "torch>=2.11.0",
-    "torchaudio>=2.11.0",
-    "torchvision>=0.26.0",
+    "torch==2.2.2",
+    "torchaudio==2.2.2",
+    "torchvision==0.17.2",
     "tqdm>=4.67.3",
-    "transformers>=5.5.0",
+    "transformers==4.39.3",
     "wandb>=0.25.1",
     "weave>=0.52.36",
 ]
+
+[[tool.uv.index]]
+name = "pytorch-cu121"
+url = "https://download.pytorch.org/whl/cu121"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu121" }
+torchaudio = { index = "pytorch-cu121" }
+torchvision = { index = "pytorch-cu121" }
