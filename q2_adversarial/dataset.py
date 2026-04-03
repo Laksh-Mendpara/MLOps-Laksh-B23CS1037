@@ -17,15 +17,34 @@ def get_dataloaders(config):
     train_dataset = datasets.CIFAR10(
         root=config.DATA_DIR, train=True, download=True, transform=train_transform
     )
-    
+    eval_train_dataset = datasets.CIFAR10(
+        root=config.DATA_DIR, train=True, download=True, transform=test_transform
+    )
     test_dataset = datasets.CIFAR10(
         root=config.DATA_DIR, train=False, download=True, transform=test_transform
     )
 
-    train_loader = DataLoader(train_dataset, batch_size=config.BATCH_SIZE, shuffle=True, num_workers=4)
-    test_loader = DataLoader(test_dataset, batch_size=config.BATCH_SIZE, shuffle=False, num_workers=4)
+    val_size = 5000
+    train_size = len(train_dataset) - val_size
+    generator = torch.Generator().manual_seed(42)
+    permutation = torch.randperm(len(train_dataset), generator=generator).tolist()
+    train_indices = permutation[:train_size]
+    val_indices = permutation[train_size:]
+
+    train_subset = Subset(train_dataset, train_indices)
+    val_subset = Subset(eval_train_dataset, val_indices)
+
+    loader_kwargs = {
+        "num_workers": config.NUM_WORKERS,
+        "pin_memory": config.DEVICE.startswith("cuda"),
+        "persistent_workers": config.NUM_WORKERS > 0,
+    }
+
+    train_loader = DataLoader(train_subset, batch_size=config.BATCH_SIZE, shuffle=True, **loader_kwargs)
+    val_loader = DataLoader(val_subset, batch_size=config.BATCH_SIZE, shuffle=False, **loader_kwargs)
+    test_loader = DataLoader(test_dataset, batch_size=config.BATCH_SIZE, shuffle=False, **loader_kwargs)
     
-    return train_loader, test_loader, train_dataset.classes
+    return train_loader, val_loader, test_loader, train_dataset.classes
 
 def get_subset_loader(dataset, num_samples, batch_size=32):
     indices = np.random.choice(len(dataset), num_samples, replace=False)

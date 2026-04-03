@@ -31,11 +31,16 @@ def evaluate_fgsm_scratch(model, test_loader, config, epsilons):
             correct += (final_pred.flatten() == target).sum().item()
             total += target.size(0)
             
-            if len(adv_examples) < 10 and eps > 0:
-                successful_indices = (init_pred.flatten() == target) & (final_pred.flatten() != target)
+            if len(adv_examples) < config.ADV_SAMPLE_LOG_COUNT and eps > 0:
                 for i in range(len(data)):
-                    if successful_indices[i] and len(adv_examples) < 10:
-                        adv_examples.append((init_pred[i].item(), final_pred[i].item(), data[i].squeeze().detach().cpu().numpy(), perturbed_data[i].squeeze().detach().cpu().numpy()))
+                    if len(adv_examples) < config.ADV_SAMPLE_LOG_COUNT:
+                        adv_examples.append((
+                            target[i].item(),
+                            init_pred[i].item(),
+                            final_pred[i].item(),
+                            data[i].detach().cpu().numpy(),
+                            perturbed_data[i].detach().cpu().numpy(),
+                        ))
                         
         acc = correct / float(total)
         logging.info(f"Epsilon: {eps}\tTest Accuracy = {acc:.4f}")

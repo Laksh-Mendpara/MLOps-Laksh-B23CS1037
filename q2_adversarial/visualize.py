@@ -13,13 +13,13 @@ def plot_adversarial_examples(examples, class_names, config, title="FGSM Adversa
     if num_examples == 1: axes = [axes]
     
     for i in range(num_examples):
-        init_pred, final_pred, orig_ex, adv_ex = examples[i]
+        true_label, init_pred, final_pred, orig_ex, adv_ex = examples[i]
         axes[i][0].imshow(denormalize(orig_ex))
-        axes[i][0].set_title(f"Original: {class_names[init_pred]}\n(Pred: {class_names[init_pred]})")
+        axes[i][0].set_title(f"Original\nTrue: {class_names[true_label]} | Pred: {class_names[init_pred]}")
         axes[i][0].axis('off')
         
         axes[i][1].imshow(denormalize(adv_ex))
-        axes[i][1].set_title(f"Adversarial\n(Pred: {class_names[final_pred]})")
+        axes[i][1].set_title(f"Adversarial\nPred: {class_names[final_pred]}")
         axes[i][1].axis('off')
         
     plt.suptitle(title, fontsize=16)
