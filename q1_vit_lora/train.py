@@ -4,6 +4,7 @@ from tqdm import tqdm
 import math
 import logging
 
+
 def get_lora_gradient_norms(model):
     total_norm = 0.0
     for name, param in model.named_parameters():
@@ -60,12 +61,22 @@ def train_model(model, train_loader, val_loader, config, run_name, epochs=10):
     
     best_val_acc = 0.0
     best_model_state = None
+    history = []
     
     for epoch in range(1, epochs + 1):
         logging.info(f"Epoch {epoch}/{epochs}")
         train_loss, train_acc = train_one_epoch(model, train_loader, optimizer, criterion, config.DEVICE)
         val_loss, val_acc = validate(model, val_loader, criterion, config.DEVICE)
         scheduler.step()
+
+        epoch_metrics = {
+            "epoch": epoch,
+            "train_loss": train_loss,
+            "val_loss": val_loss,
+            "train_acc": train_acc,
+            "val_acc": val_acc,
+        }
+        history.append(epoch_metrics)
         
         wandb.log({
             "epoch": epoch, "train_loss": train_loss, "train_acc": train_acc,
@@ -79,4 +90,4 @@ def train_model(model, train_loader, val_loader, config, run_name, epochs=10):
             
     if best_model_state:
         model.load_state_dict(best_model_state, strict=False)
-    return model, best_val_acc
+    return model, best_val_acc, history
