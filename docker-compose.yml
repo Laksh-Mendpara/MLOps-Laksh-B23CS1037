@@ -1,0 +1,47 @@
+services:
+  q1_vit_lora:
+    build:
+      context: .
+      dockerfile: q1_vit_lora/Dockerfile
+      network: host
+    runtime: nvidia
+    network_mode: "host"
+    shm_size: '2gb'
+    ipc: host
+    volumes:
+      - ./:/app
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    environment:
+      - WANDB_API_KEY=${WANDB_API_KEY}
+      - HF_Token=${HF_Token}
+
+  q2_adversarial:
+    build:
+      context: .
+      dockerfile: q2_adversarial/Dockerfile
+      network: host
+    runtime: nvidia
+    network_mode: "host"
+    shm_size: '2gb'
+    ipc: host
+    depends_on:
+      q1_vit_lora:
+        condition: service_completed_successfully
+    volumes:
+      - ./:/app
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    environment:
+      - WANDB_API_KEY=${WANDB_API_KEY}
+      - HF_Token=${HF_Token}
