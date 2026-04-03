@@ -314,6 +314,17 @@
       margin-bottom: 20px;
     }
 
+    .card-highlights {
+      margin-bottom: 20px;
+      padding-left: 20px;
+      color: var(--text-secondary);
+    }
+
+    .card-highlights li {
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+
     .card-stats {
       display: flex;
       gap: 16px;
@@ -582,6 +593,37 @@
             "https://huggingface.co/Laksh-Mendpara/MLOPS-Assignment-4/tree/main",
         },
       },
+      {
+        id: 5,
+        title: "ViT LoRA and Adversarial Robustness",
+        subtitle: "MLOps Assignment 5",
+        type: "assignment",
+        description:
+          "Built a two-part assignment covering parameter-efficient finetuning and adversarial robustness. Q1 finetunes DeiT-S on CIFAR-100 with a full LoRA sweep and an optional partial-unfreeze experiment. Q2 trains a clean ResNet18 on CIFAR-10, compares FGSM from scratch vs IBM ART, and trains PGD/BIM adversarial detectors with ResNet34.",
+        highlights: [
+          "Q1 baseline DeiT-S head-only finetuning reached 73.63% test accuracy, while the best LoRA setup (rank 8, alpha 4) reached 85.32%.",
+          "Completed the optional step-7 partial-unfreeze LoRA experiment, achieving 85.18% with the last two encoder blocks trainable.",
+          "Logged Q1 train-val tables, class-wise test histograms, LoRA gradient-update plots, and pushed the best adapter to Hugging Face.",
+          "Q2 clean ResNet18 reached 93.23% test accuracy, far above the 72% requirement.",
+          "Compared FGSM from scratch vs IBM ART across multiple epsilon values and saved qualitative clean/adversarial image grids.",
+          "Trained ResNet34 adversarial detectors with 100.00% PGD detection accuracy and 99.99% BIM detection accuracy.",
+        ],
+        stats: {
+          accuracy: "Q1: 85.32% • Q2: 93.23%",
+          params: "LoRA Best: 259,684",
+          flops: "Detectors: 100.0/99.99%",
+        },
+        links: {
+          github:
+            "https://github.com/Laksh-Mendpara/MLOps-Laksh-B23CS1037/tree/Assignment-5",
+          report:
+            "https://github.com/Laksh-Mendpara/MLOps-Laksh-B23CS1037/blob/Assignment-5/B23CS0137_Laksh_Mendpara_Ass5.pdf",
+          wandb:
+            "https://wandb.ai/b23cs1037-iit-jodhpur/MLOps-Assignment-5?nw=nwuserb23cs1037",
+          huggingface:
+            "https://huggingface.co/ByteMaster01/ViT-S-LoRA-CIFAR100",
+        },
+      },
     ];
 
     const worksheets = [
@@ -628,6 +670,14 @@
           </div>
           <div className="card-body">
             <p className="card-description">{item.description}</p>
+
+            {item.highlights && (
+              <ul className="card-highlights">
+                {item.highlights.map((highlight, index) => (
+                  <li key={index}>{highlight}</li>
+                ))}
+              </ul>
+            )}
 
             {item.stats && (
               <div className="card-stats">
