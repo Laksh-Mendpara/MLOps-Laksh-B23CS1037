@@ -199,7 +199,7 @@ def main(test_mode=False):
     
     if best_config:
         print(f"\nBest config: {best_config}")
-        push_model_to_hub(best_model_path, "b23cs1037/ViT-S-LoRA-CIFAR100")
+        push_model_to_hub(best_model_path, Config.HF_REPO_ID)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run Q1 ViT LoRA experiments.")

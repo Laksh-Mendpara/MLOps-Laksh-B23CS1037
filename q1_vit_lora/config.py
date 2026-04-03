@@ -1,6 +1,9 @@
 import os
 import torch
 import warnings
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Config:
     # Model - 'google/vit-small' doesn't exist, using official 'facebook/deit-small-patch16-224' (ViT-S architecture)
@@ -28,8 +31,9 @@ class Config:
     
     # HuggingFace & WandB
     # Only use token if it's definitely provided and not a placeholder
-    raw_token = os.getenv("HF_Token", "")
+    raw_token = os.getenv("HF_Token") or os.getenv("HF_TOKEN") or ""
     HF_TOKEN = raw_token if raw_token and not raw_token.startswith("<") else None
+    HF_REPO_ID = os.getenv("HF_REPO_ID", "ViT-S-LoRA-CIFAR100")
     WANDB_API_KEY = os.getenv("WANDB_API_KEY", "")
     WANDB_PROJECT = "MLOps-Assignment-5"
     
