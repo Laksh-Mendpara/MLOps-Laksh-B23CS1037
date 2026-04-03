@@ -1,0 +1,12 @@
+LoRA layers (with/without),Rank,Alpha,Dropout,Overall Test Accuracy,Trainable Parameters used
+without,-,-,0.1,73.63,38500
+with,2,2,0.1,84.94,93796
+with,2,4,0.1,84.51,93796
+with,2,8,0.1,84.27,93796
+with,4,2,0.1,85.01,149092
+with,4,4,0.1,85.01,149092
+with,4,8,0.1,84.93,149092
+with,8,2,0.1,85.01,259684
+with,8,4,0.1,85.32,259684
+with,8,8,0.1,85.25,259684
+with (partial-unfreeze last 2),8,4,0.1,85.18,222820
