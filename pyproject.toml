@@ -1,0 +1,25 @@
+[project]
+name = "mlops-laksh-b23cs1037"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "adversarial-robustness-toolbox>=1.20.1",
+    "datasets>=4.8.4",
+    "huggingface-hub>=1.9.0",
+    "matplotlib>=3.10.8",
+    "numpy>=2.2.6",
+    "optuna>=4.8.0",
+    "peft>=0.18.1",
+    "pillow>=12.2.0",
+    "python-dotenv>=1.2.2",
+    "scikit-learn>=1.7.2",
+    "torch>=2.11.0",
+    "torchaudio>=2.11.0",
+    "torchvision>=0.26.0",
+    "tqdm>=4.67.3",
+    "transformers>=5.5.0",
+    "wandb>=0.25.1",
+    "weave>=0.52.36",
+]
