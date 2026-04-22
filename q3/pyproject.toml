@@ -1,0 +1,16 @@
+[project]
+name = "q3"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "datasets>=4.8.4",
+    "diffusers>=0.37.1",
+    "matplotlib>=3.10.8",
+    "optimum>=2.1.0",
+    "peft>=0.19.1",
+    "torch>=2.11.0",
+    "tqdm>=4.67.3",
+    "transformers>=5.5.4",
+]
