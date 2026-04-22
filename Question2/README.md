@@ -1,0 +1,1 @@
+ Question2: mIOU: 0.9443  and mDICE: 0.9663
