@@ -1,3 +1,1 @@
-# ML-DL-OPS
-
-This repository contains the code for the MLOps course.
+ Question2: mIOU: 0.9443  and mDICE: 0.9663
